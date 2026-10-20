@@ -1,0 +1,1739 @@
+<html lang="zh-CN" data-trae-theme="light"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0FAB5F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="健身打卡">
+<title>健身打卡</title>
+<link rel="icon" href="data:,">
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;%E5%81%A5%E8%BA%AB%E6%89%93%E5%8D%A1&quot;,&quot;short_name&quot;:&quot;%E5%81%A5%E8%BA%AB%E6%89%93%E5%8D%A1&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23F6F7F9&quot;,&quot;theme_color&quot;:&quot;%230FAB5F&quot;}">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --brand:#0FAB5F; --brand-soft:#E2F7EC;
+  --bg:#F6F7F9; --card:#fff; --line:#ECEEF1; --field:#F6F7F9;
+  --t1:#1C1F26; --t2:#7A8190; --t3:#A6ADB9; --red:#E5484D;
+  --radius:14px;
+}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI","Microsoft YaHei",sans-serif;
+  background:var(--bg); color:var(--t1); font-size:15px; line-height:1.5;
+}
+button{font-family:inherit;cursor:pointer;touch-action:manipulation}
+input,select,textarea{font-family:inherit;-webkit-appearance:none;appearance:none}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.hidden{display:none!important}
+#app{max-width:520px;margin:0 auto;padding:14px 16px calc(80px + env(safe-area-inset-bottom))}
+
+/* 顶部 */
+.t-head{display:flex;justify-content:space-between;align-items:center;margin:6px 2px 14px}
+.t-date{font-size:21px;font-weight:700}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pill-gray{background:#EDEFF2;color:var(--t2)}
+.pill-green{background:var(--brand-soft);color:var(--brand)}
+.hint{font-size:12px;color:var(--t3);margin:0 2px 10px}
+
+/* 卡片 */
+.card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(20,30,40,.04)}
+.empty-card{text-align:center;color:var(--t2);font-size:13px;padding:22px 16px}
+.c-title{font-size:14px;font-weight:700;margin-bottom:10px}
+.c-sub{font-size:11px;color:var(--t3);font-weight:400;margin-left:4px}
+
+/* 按钮 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--brand);color:#fff;border:none;border-radius:10px;height:44px;padding:0 18px;font-size:15px;font-weight:600}
+.btn:active{opacity:.85}
+.btn-block{width:100%}
+.btn-ghost{background:#fff;border:1px solid var(--line);color:var(--t1);border-radius:10px;height:44px;padding:0 16px;font-size:14px;font-weight:500}
+.btn-ghost.danger{color:var(--red);border-color:#F3D4D5}
+.btn-danger-txt{background:none;border:none;color:var(--red);font-size:13px;padding:6px 0;cursor:pointer}
+
+/* 训练页 */
+.hero{text-align:center;padding:40px 16px}
+.hero h2{font-size:17px;margin-bottom:6px}
+.hero p{color:var(--t2);font-size:13px;margin-bottom:20px}
+.ex-card{padding:14px 16px}
+.ex-card.act{box-shadow:0 0 0 1.5px var(--brand),0 1px 2px rgba(20,30,40,.04)}
+.ex-h{display:flex;align-items:center;gap:8px}
+.ex-name{font-weight:700;font-size:16px;flex:1}
+.tag{font-size:11px;color:var(--brand);background:var(--brand-soft);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.x{color:var(--t3);font-size:20px;line-height:1;padding:4px 6px;cursor:pointer}
+.ex-last{font-size:12px;color:var(--t2);margin-top:6px}
+.sets{margin-top:8px}
+.set-row{display:flex;justify-content:space-between;align-items:center;background:var(--field);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:13px}
+.set-row .n{color:var(--t2)}
+.inp-row{display:flex;gap:8px;margin-top:10px}
+.inp-row input{flex:1;min-width:0;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font-size:16px;background:#fff;color:var(--t1)}
+.inp-row input:focus{outline:none;border-color:var(--brand)}
+.inp-row .btn{height:42px;flex-shrink:0;padding:0 14px;font-size:14px}
+.add-ex{width:100%;border:1.5px dashed #C9CFD8;background:none;border-radius:var(--radius);padding:14px;color:var(--t2);font-size:14px;margin-bottom:12px}
+.t-foot{margin-top:18px}
+.t-sum{text-align:center;font-size:13px;color:var(--t2);margin-bottom:10px}
+
+/* 历史页 */
+.stats{display:flex;gap:10px;margin-bottom:12px}
+.stat{flex:1;text-align:center;background:#fff;border-radius:var(--radius);padding:13px 4px;box-shadow:0 1px 2px rgba(20,30,40,.04)}
+.stat b{display:block;font-size:20px}
+.stat span{display:block;font-size:11px;color:var(--t2);margin-top:2px}
+.heat-wrap{overflow-x:auto;padding:2px 0 4px}
+.heat-grid{display:grid;grid-template-rows:repeat(7,13px);grid-auto-flow:column;grid-auto-columns:13px;gap:3px;width:max-content}
+.hc{display:inline-block;width:13px;height:13px;border-radius:3px;cursor:pointer}
+.lv0{background:#EBEDF0}.lv1{background:#C9EED9}.lv2{background:#85DCA9}.lv3{background:#3FC57F}.lv4{background:var(--brand)}
+.hc.fut{visibility:hidden;cursor:default}
+.hc.today{box-shadow:0 0 0 1.5px #2A2E37}
+.heat-legend{display:flex;align-items:center;justify-content:flex-end;gap:3px;font-size:11px;color:var(--t2);margin-top:8px}
+.heat-legend .hc{cursor:default}
+.dd{background:var(--field);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:13px}
+.rec-h{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.rec-h .sub{display:block;font-size:12px;color:var(--t2);margin-top:2px;font-weight:400}
+.chev{color:var(--t3);font-size:16px;transition:transform .15s}
+.chev.open{transform:rotate(90deg)}
+.rec-ex{border-top:1px solid var(--line);padding:9px 0 2px;margin-top:9px;font-size:13px}
+.rec-ex b{font-size:14px;margin-right:6px}
+.rec-setline{color:var(--t2);margin-top:3px}
+.rec-del{margin-top:10px}
+.bk-btns{display:flex;gap:8px}
+.bk-btns .btn-ghost{flex:1;height:38px;font-size:13px;padding:0 6px}
+.bk-hint{font-size:12px;color:var(--t3);margin-top:10px}
+
+/* 动作库 */
+.lib-form{display:flex;gap:8px}
+.lib-form input{flex:1;min-width:0;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 12px;font-size:16px;color:var(--t1)}
+.lib-form input:focus{outline:none;border-color:var(--brand)}
+.lib-form select{height:42px;border:1px solid var(--line);border-radius:10px;padding:0 8px;background:#fff;font-size:14px;color:var(--t1)}
+.lib-form .btn{height:42px;flex-shrink:0;padding:0 16px;font-size:14px}
+.g-title{font-size:12px;color:var(--t2);margin:16px 4px 8px}
+.lib-row{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:12px;padding:13px 14px;margin-bottom:8px;cursor:pointer;box-shadow:0 1px 2px rgba(20,30,40,.04)}
+.lib-hint{font-size:12px;color:var(--t3);text-align:center;margin-top:14px}
+
+/* 底部导航 */
+#tabbar{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:50}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 0 6px;font-size:11px;color:var(--t3);background:none;border:none}
+.tab.on{color:var(--brand)}
+.tab svg{width:23px;height:23px}
+
+/* 抽屉 */
+#drawer-mask{position:fixed;inset:0;background:rgba(15,20,30,.45);z-index:90}
+#drawer{position:fixed;left:0;right:0;bottom:0;max-height:72vh;background:#fff;border-radius:18px 18px 0 0;z-index:95;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .22s ease}
+#drawer.open{transform:translateY(0)}
+.d-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 8px;font-weight:700;font-size:16px}
+.d-h .x{font-size:24px}
+.d-list{overflow-y:auto;padding:4px 18px calc(20px + env(safe-area-inset-bottom))}
+.d-part{font-size:12px;color:var(--t2);margin:12px 0 6px}
+.d-rows{display:flex;flex-wrap:wrap;gap:8px}
+.d-row{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-size:14px;color:var(--t1)}
+.d-row.sel{background:var(--brand-soft);border-color:var(--brand);color:var(--brand)}
+.d-empty{color:var(--t2);font-size:13px;text-align:center;padding:20px 0}
+
+/* 弹窗 */
+#modal-mask{position:fixed;inset:0;background:rgba(15,20,30,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+#modal{background:#fff;border-radius:16px;width:100%;max-width:400px;padding:20px}
+#modal h3{font-size:16px;margin-bottom:12px}
+#modal input,#modal textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;color:var(--t1)}
+#modal input:focus,#modal textarea:focus{outline:none;border-color:var(--brand)}
+#modal textarea{font-size:12px;font-family:Consolas,monospace;resize:vertical}
+#modal .m-hint{font-size:12px;color:var(--t2);margin-bottom:10px}
+.m-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.m-btns .btn{height:40px;padding:0 18px;font-size:14px}
+.m-btns .btn-ghost{height:40px}
+
+/* 轻提示 */
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(8px);background:rgba(28,31,38,.92);color:#fff;font-size:14px;padding:10px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:all .2s;z-index:200;max-width:80vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+<style data-trae-edit-ui="true" id="trae-previewer-tools-styles">:root {
+  --trae-layer-image-download: 89990;
+  --trae-layer-browser-inspect-overlay: 90000;
+  --trae-layer-browser-inspect-highlight: 90010;
+  --trae-layer-browser-inspect-action: 90020;
+  --trae-layer-text-selection-action: 90030;
+  --trae-layer-edit-tooltip: 100095;
+}
+:root,
+[data-trae-theme='dark'] {
+  --trae-bg-base-default: #171717;
+  --trae-bg-menu: #222427;
+  --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04);
+  --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08);
+  --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12);
+  --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16);
+  --trae-bg-invert: #f5f9fe;
+  --trae-bg-invert-hover: #e8ecf0;
+  --trae-bg-invert-active: #dce0e4;
+  --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35);
+  --bg-bg-brand-popup: rgba(106, 111, 255, 0.15);
+  --trae-border-l1: #e0e2f217;
+  --trae-border-l2: rgba(255, 255, 255, 0.12);
+  --trae-border-l3: rgba(255, 255, 255, 0.08);
+  --trae-border-neutral-l3: rgba(229, 229, 229, 0.20);
+  --trae-border-brand: #6a6fff;
+  --trae-text-default: #f5f9fe;
+  --trae-text-default-hover: #f5f9fe;
+  --trae-text-default-active: #f5f9fe;
+  --trae-text-secondary: rgba(245, 249, 254, 0.5);
+  --trae-text-tertiary: rgba(245, 249, 254, 0.4);
+  --trae-text-disabled: #666b75;
+  --trae-text-onaccent: #222427;
+  --trae-icon-default: #f5f9fe;
+  --trae-icon-secondary: rgba(245, 249, 254, 0.5);
+  --trae-icon-brand: #6a6fff;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #222427;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #387bff;
+  --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18);
+  --trae-status-success-default: #33c192;
+  --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18);
+  --trae-status-error-default: #f65a5a;
+  --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(106, 111, 255, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+[data-trae-theme='light'] {
+  --trae-bg-base-default: #fafafa;
+  --trae-bg-menu: #ffffff;
+  --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04);
+  --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06);
+  --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08);
+  --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12);
+  --trae-bg-invert: #1f2328;
+  --trae-bg-invert-hover: #32383f;
+  --trae-bg-invert-active: #444d56;
+  --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20);
+  --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22);
+  --bg-bg-brand-popup: rgba(170, 183, 255, 0.36);
+  --trae-border-l1: rgba(0, 0, 0, 0.1);
+  --trae-border-l2: rgba(0, 0, 0, 0.12);
+  --trae-border-l3: rgba(0, 0, 0, 0.08);
+  --trae-border-neutral-l3: rgba(115, 115, 115, 0.36);
+  --trae-border-brand: #4b3fe3;
+  --trae-text-default: #1f2328;
+  --trae-text-default-hover: #111214;
+  --trae-text-default-active: #111214;
+  --trae-text-secondary: rgba(31, 35, 40, 0.5);
+  --trae-text-tertiary: rgba(31, 35, 40, 0.4);
+  --trae-text-disabled: #a1a1a1;
+  --trae-text-onaccent: #ffffff;
+  --trae-icon-default: #1f2328;
+  --trae-icon-secondary: rgba(31, 35, 40, 0.5);
+  --trae-icon-brand: #4b3fe3;
+  --icon-icon-brand: var(--trae-icon-brand);
+  --trae-icon-onaccent: #ffffff;
+  --trae-status-success: #22c55e;
+  --trae-status-primary: #3b82f6;
+  --trae-status-primary-default: #2f74ff;
+  --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12);
+  --trae-status-success-default: #15a877;
+  --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12);
+  --trae-status-error-default: #e8463a;
+  --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12);
+  --trae-annotation-marker-bg: #4b3fe3;
+  --trae-annotation-marker-text: #ffffff;
+  --trae-annotation-region-border: var(--trae-status-primary-default);
+  --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18);
+  --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06);
+  --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2);
+  --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08);
+  --text-text-default: var(--trae-text-default);
+  --text-text-onaccent: var(--trae-text-onaccent);
+  --bg-bg-menu: var(--trae-bg-menu);
+  --bg-bg-white: var(--trae-bg-menu);
+  --bg-bg-invert: var(--trae-bg-invert);
+  --bg-bg-invert-disabled: var(--trae-bg-invert-disabled);
+  --bg-bg-overlay-l1: var(--trae-bg-overlay-l1);
+  --bg-bg-overlay-l2: var(--trae-bg-overlay-l2);
+  --bg-bg-overlay-l3: var(--trae-bg-overlay-l3);
+  --border-border-neutral-l1: var(--trae-border-l1);
+  --border-border-brand: var(--trae-border-brand);
+  --border-border-brand-half: rgba(75, 63, 227, 0.4);
+  --status-error-default: var(--trae-status-error-default);
+  --status-error-surface-l1: var(--trae-status-error-surface-l1);
+  --radius-radius-md-12: 12px;
+  --spacers-spacer-0: 0;
+  --spacers-spacer-6: 6px;
+}
+
+@keyframes trae-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes trae-edit-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes trae-edit-bar-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes trae-edit-panel-leave {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body *:not([data-trae-edit-ui]):not([data-trae-edit-ui] *) {
+  transition: none !important;
+  animation-play-state: paused !important;
+}
+
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel),
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * {
+  pointer-events: none !important;
+}
+
+.trae-browser-inspect-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--trae-layer-browser-inspect-overlay);
+  pointer-events: auto;
+  background: transparent;
+}
+
+.trae-browser-inspect-highlight-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--trae-layer-browser-inspect-highlight);
+  display: none;
+}
+
+.trae-browser-inspect-highlight-tag {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 18px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: var(--trae-status-success-default);
+  color: var(--trae-text-onaccent);
+  font-size: 12px;
+  font-weight: 400;
+  display: none;
+  align-items: center;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-highlight-box-show {
+  display: flex;
+}
+
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show {
+  display: none;
+}
+
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show {
+  display: block !important;
+}
+
+.trae-browser-inspect-select-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: var(--trae-layer-browser-inspect-action);
+}
+
+.trae-browser-inspect-select-highlight-box {
+  background: transparent !important;
+}
+
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag {
+  background-color: var(--trae-status-success-default);
+}
+
+.trae-add-to-chat-card {
+  display: block;
+  overflow: hidden;
+  background: var(--trae-bg-menu);
+  border: 1px solid var(--trae-border-l1);
+  border-radius: 8px;
+  box-shadow: var(--trae-floating-shadow);
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trae-add-to-chat-content {
+  position: relative;
+  width: max-content;
+}
+
+.trae-fade-exit {
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.trae-fade-enter {
+  opacity: 1;
+  transition: opacity 0.2s ease-in;
+}
+
+.trae-buttons-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  background: transparent;
+}
+
+.trae-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.trae-action-button:hover {
+  background: var(--trae-bg-overlay-l2);
+}
+
+.trae-action-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-action-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-action-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-icon-default);
+  flex-shrink: 0;
+}
+
+.trae-action-button-title {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+}
+
+.trae-edit-toolbar-button-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, #4b3fe3) !important;
+  font-weight: bold !important;
+}
+
+.trae-edit-toolbar-button-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:hover,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:hover,
+.trae-edit-toolbar button[data-action='font-decrease']:hover,
+.trae-edit-toolbar button[data-action='font-increase']:hover,
+.trae-edit-toolbar button[data-action^='align-']:hover {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important;
+}
+
+.trae-edit-toolbar button[data-action='alignment-dropdown']:active,
+.trae-edit-toolbar button[data-action='text-align-dropdown']:active,
+.trae-edit-toolbar button[data-action='font-decrease']:active,
+.trae-edit-toolbar button[data-action='font-increase']:active,
+.trae-edit-toolbar button[data-action^='align-']:active {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important;
+}
+
+.trae-comment-input {
+  background: transparent;
+  color: var(--trae-text-default);
+  caret-color: var(--trae-text-default);
+}
+
+.trae-comment-input::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-point-edit-bar,
+.trae-point-comment-input-bar,
+.trae-comment-only-panel {
+  transform-origin: top center;
+  will-change: opacity, transform;
+}
+
+.trae-edit-panel:not(.trae-edit-panel-leave) {
+  pointer-events: auto !important;
+}
+
+.trae-edit-bar-enter {
+  animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both;
+}
+
+.trae-edit-bar-leave {
+  pointer-events: none;
+  animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel-leave {
+  pointer-events: none;
+  animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both;
+}
+
+.trae-edit-panel [data-trae-tooltip] {
+  position: relative;
+}
+
+.trae-edit-panel [data-trae-tooltip]::after {
+  content: attr(data-trae-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: var(--trae-layer-edit-tooltip);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  color: var(--trae-text-onaccent, var(--text-text-onaccent));
+  box-shadow: var(--trae-floating-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0.039px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateX(-50%);
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 5px);
+  z-index: var(--trae-layer-edit-tooltip);
+  width: 8px;
+  height: 4px;
+  background: var(--trae-bg-invert, var(--bg-bg-invert));
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.trae-edit-panel [data-trae-tooltip]:hover::after,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::after,
+.trae-edit-panel [data-trae-tooltip]:hover::before,
+.trae-edit-panel [data-trae-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.trae-comment-btn {
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-comment-btn:disabled {
+  cursor: not-allowed;
+}
+
+.trae-comment-btn:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-comment-btn-primary {
+  background: var(--trae-bg-invert);
+  color: var(--trae-text-onaccent);
+}
+
+.trae-comment-btn-primary:hover:not(:disabled) {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-comment-btn-primary:active:not(:disabled) {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-comment-btn-primary:disabled {
+  background: var(--trae-bg-invert-disabled);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-secondary {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-secondary:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-comment-btn-secondary:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l4);
+}
+
+.trae-comment-btn-secondary:disabled {
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-disabled);
+}
+
+.trae-comment-btn-text {
+  background: transparent;
+  color: var(--trae-text-default);
+}
+
+.trae-comment-btn-text:hover:not(:disabled) {
+  border-radius: 8px;
+  background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1));
+  color: var(--trae-text-default-hover);
+}
+
+.trae-comment-btn-text:active:not(:disabled) {
+  border-radius: 8px;
+  background: var(--trae-bg-overlay-l2);
+  color: var(--trae-text-default-active);
+}
+
+.trae-comment-btn-text:disabled {
+  background: transparent;
+  color: var(--trae-text-disabled);
+}
+
+.trae-marking-btn {
+  justify-content: center;
+}
+
+.trae-marking-btn:hover:not(:disabled) {
+  background: var(--trae-bg-overlay-l1) !important;
+}
+
+.trae-marking-btn-active {
+  background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn-active:hover {
+  background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important;
+  color: var(--icon-icon-brand, var(--trae-icon-brand)) !important;
+}
+
+.trae-marking-btn:active:not(:disabled) {
+  background: var(--trae-bg-overlay-l2) !important;
+}
+
+.trae-marking-btn:disabled {
+  color: var(--trae-text-disabled) !important;
+  cursor: not-allowed !important;
+}
+
+.trae-action-button-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--trae-icon-secondary);
+  flex-shrink: 0;
+}
+
+.trae-shortcut-container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.trae-shortcut-key {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 12px;
+  color: var(--trae-icon-secondary);
+}
+
+.trae-add-to-chat-divider {
+  width: 2px;
+  height: 12px;
+  padding: 0 6px;
+  box-sizing: content-box;
+  background-clip: content-box;
+  background-color: var(--trae-border-l2);
+  flex-shrink: 0;
+}
+
+.trae-editor-view {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  padding: 8px;
+  background: transparent;
+}
+
+.trae-editor-text-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background: var(--trae-bg-overlay-l1);
+  border: 1px solid var(--trae-border-l3);
+  border-radius: 4px;
+  gap: 8px;
+}
+
+.trae-editor-textarea {
+  flex: 1;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--trae-text-default);
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  max-height: 140px;
+}
+
+.trae-editor-textarea::placeholder {
+  color: var(--trae-text-tertiary);
+}
+
+.trae-editor-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.2s ease-out,
+    opacity 0.2s ease-out,
+    margin-top 0.2s ease-out;
+}
+
+.trae-editor-action-bar-visible {
+  max-height: 32px;
+  opacity: 1;
+  margin-top: 8px;
+}
+
+.trae-editor-cancel-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 4px;
+  background: var(--trae-bg-overlay-l2);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-cancel-button:hover {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:active {
+  background: var(--trae-bg-overlay-l3);
+}
+
+.trae-editor-cancel-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-cancel-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-default);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--trae-bg-invert);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.trae-editor-submit-button:hover {
+  background: var(--trae-bg-invert-hover);
+}
+
+.trae-editor-submit-button:active {
+  background: var(--trae-bg-invert-active);
+}
+
+.trae-editor-submit-button:focus-visible {
+  outline: 2px solid var(--trae-status-primary);
+  outline-offset: 1px;
+}
+
+.trae-editor-submit-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--trae-text-onaccent);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.trae-editor-submit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: var(--trae-icon-onaccent);
+  flex-shrink: 0;
+}
+
+.trae-success-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  white-space: nowrap;
+}
+
+.trae-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--trae-status-success);
+  flex-shrink: 0;
+}
+
+.trae-success-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--trae-text-default);
+  user-select: none;
+}
+</style><style data-trae-pptx-captured-css="true">* { margin: 0px; padding: 0px; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+:root { --brand: #0FAB5F; --brand-soft: #E2F7EC; --bg: #F6F7F9; --card: #fff; --line: #ECEEF1; --field: #F6F7F9; --t1: #1C1F26; --t2: #7A8190; --t3: #A6ADB9; --red: #E5484D; --radius: 14px; }
+html, body { height: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--t1); font-size: 15px; line-height: 1.5; }
+button { font-family: inherit; cursor: pointer; touch-action: manipulation; }
+input, select, textarea { font-family: inherit; appearance: none; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { appearance: none; margin: 0px; }
+input[type="number"] { }
+.hidden { display: none !important; }
+#app { max-width: 520px; margin: 0px auto; padding: 14px 16px calc(80px + env(safe-area-inset-bottom)); }
+.t-head { display: flex; justify-content: space-between; align-items: center; margin: 6px 2px 14px; }
+.t-date { font-size: 21px; font-weight: 700; }
+.pill { font-size: 12px; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.pill-gray { background: rgb(237, 239, 242); color: var(--t2); }
+.pill-green { background: var(--brand-soft); color: var(--brand); }
+.hint { font-size: 12px; color: var(--t3); margin: 0px 2px 10px; }
+.card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: rgba(20, 30, 40, 0.04) 0px 1px 2px; }
+.empty-card { text-align: center; color: var(--t2); font-size: 13px; padding: 22px 16px; }
+.c-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.c-sub { font-size: 11px; color: var(--t3); font-weight: 400; margin-left: 4px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--brand); color: rgb(255, 255, 255); border: none; border-radius: 10px; height: 44px; padding: 0px 18px; font-size: 15px; font-weight: 600; }
+.btn:active { opacity: 0.85; }
+.btn-block { width: 100%; }
+.btn-ghost { background: rgb(255, 255, 255); border: 1px solid var(--line); color: var(--t1); border-radius: 10px; height: 44px; padding: 0px 16px; font-size: 14px; font-weight: 500; }
+.btn-ghost.danger { color: var(--red); border-color: rgb(243, 212, 213); }
+.btn-danger-txt { background: none; border: none; color: var(--red); font-size: 13px; padding: 6px 0px; cursor: pointer; }
+.hero { text-align: center; padding: 40px 16px; }
+.hero h2 { font-size: 17px; margin-bottom: 6px; }
+.hero p { color: var(--t2); font-size: 13px; margin-bottom: 20px; }
+.ex-card { padding: 14px 16px; }
+.ex-card.act { box-shadow: 0 0 0 1.5px var(--brand),0 1px 2px rgba(20,30,40,.04); }
+.ex-h { display: flex; align-items: center; gap: 8px; }
+.ex-name { font-weight: 700; font-size: 16px; flex: 1 1 0%; }
+.tag { font-size: 11px; color: var(--brand); background: var(--brand-soft); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+.x { color: var(--t3); font-size: 20px; line-height: 1; padding: 4px 6px; cursor: pointer; }
+.ex-last { font-size: 12px; color: var(--t2); margin-top: 6px; }
+.sets { margin-top: 8px; }
+.set-row { display: flex; justify-content: space-between; align-items: center; background: var(--field); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px; }
+.set-row .n { color: var(--t2); }
+.inp-row { display: flex; gap: 8px; margin-top: 10px; }
+.inp-row input { flex: 1 1 0%; min-width: 0px; height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0px 10px; font-size: 16px; background: rgb(255, 255, 255); color: var(--t1); }
+.inp-row input:focus { outline: none; border-color: var(--brand); }
+.inp-row .btn { height: 42px; flex-shrink: 0; padding: 0px 14px; font-size: 14px; }
+.add-ex { width: 100%; border: 1.5px dashed rgb(201, 207, 216); background: none; border-radius: var(--radius); padding: 14px; color: var(--t2); font-size: 14px; margin-bottom: 12px; }
+.t-foot { margin-top: 18px; }
+.t-sum { text-align: center; font-size: 13px; color: var(--t2); margin-bottom: 10px; }
+.stats { display: flex; gap: 10px; margin-bottom: 12px; }
+.stat { flex: 1 1 0%; text-align: center; background: rgb(255, 255, 255); border-radius: var(--radius); padding: 13px 4px; box-shadow: rgba(20, 30, 40, 0.04) 0px 1px 2px; }
+.stat b { display: block; font-size: 20px; }
+.stat span { display: block; font-size: 11px; color: var(--t2); margin-top: 2px; }
+.heat-wrap { overflow-x: auto; padding: 2px 0px 4px; }
+.heat-grid { display: grid; grid-template-rows: repeat(7, 13px); grid-auto-flow: column; grid-auto-columns: 13px; gap: 3px; width: max-content; }
+.hc { display: inline-block; width: 13px; height: 13px; border-radius: 3px; cursor: pointer; }
+.lv0 { background: rgb(235, 237, 240); }
+.lv1 { background: rgb(201, 238, 217); }
+.lv2 { background: rgb(133, 220, 169); }
+.lv3 { background: rgb(63, 197, 127); }
+.lv4 { background: var(--brand); }
+.hc.fut { visibility: hidden; cursor: default; }
+.hc.today { box-shadow: rgb(42, 46, 55) 0px 0px 0px 1.5px; }
+.heat-legend { display: flex; align-items: center; justify-content: flex-end; gap: 3px; font-size: 11px; color: var(--t2); margin-top: 8px; }
+.heat-legend .hc { cursor: default; }
+.dd { background: var(--field); border-radius: 10px; padding: 10px 12px; margin-top: 12px; font-size: 13px; }
+.rec-h { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.rec-h .sub { display: block; font-size: 12px; color: var(--t2); margin-top: 2px; font-weight: 400; }
+.chev { color: var(--t3); font-size: 16px; transition: transform 0.15s; }
+.chev.open { transform: rotate(90deg); }
+.rec-ex { border-top: 1px solid var(--line); padding: 9px 0px 2px; margin-top: 9px; font-size: 13px; }
+.rec-ex b { font-size: 14px; margin-right: 6px; }
+.rec-setline { color: var(--t2); margin-top: 3px; }
+.rec-del { margin-top: 10px; }
+.bk-btns { display: flex; gap: 8px; }
+.bk-btns .btn-ghost { flex: 1 1 0%; height: 38px; font-size: 13px; padding: 0px 6px; }
+.bk-hint { font-size: 12px; color: var(--t3); margin-top: 10px; }
+.lib-form { display: flex; gap: 8px; }
+.lib-form input { flex: 1 1 0%; min-width: 0px; height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0px 12px; font-size: 16px; color: var(--t1); }
+.lib-form input:focus { outline: none; border-color: var(--brand); }
+.lib-form select { height: 42px; border: 1px solid var(--line); border-radius: 10px; padding: 0px 8px; background: rgb(255, 255, 255); font-size: 14px; color: var(--t1); }
+.lib-form .btn { height: 42px; flex-shrink: 0; padding: 0px 16px; font-size: 14px; }
+.g-title { font-size: 12px; color: var(--t2); margin: 16px 4px 8px; }
+.lib-row { display: flex; justify-content: space-between; align-items: center; background: rgb(255, 255, 255); border-radius: 12px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer; box-shadow: rgba(20, 30, 40, 0.04) 0px 1px 2px; }
+.lib-hint { font-size: 12px; color: var(--t3); text-align: center; margin-top: 14px; }
+#tabbar { position: fixed; bottom: 0px; left: 0px; right: 0px; display: flex; background: rgb(255, 255, 255); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 50; }
+.tab { flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 0px 6px; font-size: 11px; color: var(--t3); background: none; border: none; }
+.tab.on { color: var(--brand); }
+.tab svg { width: 23px; height: 23px; }
+#drawer-mask { position: fixed; inset: 0px; background: rgba(15, 20, 30, 0.45); z-index: 90; }
+#drawer { position: fixed; left: 0px; right: 0px; bottom: 0px; max-height: 72vh; background: rgb(255, 255, 255); border-radius: 18px 18px 0px 0px; z-index: 95; display: flex; flex-direction: column; transform: translateY(105%); transition: transform 0.22s; }
+#drawer.open { transform: translateY(0px); }
+.d-h { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 8px; font-weight: 700; font-size: 16px; }
+.d-h .x { font-size: 24px; }
+.d-list { overflow-y: auto; padding: 4px 18px calc(20px + env(safe-area-inset-bottom)); }
+.d-part { font-size: 12px; color: var(--t2); margin: 12px 0px 6px; }
+.d-rows { display: flex; flex-wrap: wrap; gap: 8px; }
+.d-row { border: 1px solid var(--line); background: rgb(255, 255, 255); border-radius: 999px; padding: 8px 16px; font-size: 14px; color: var(--t1); }
+.d-row.sel { background: var(--brand-soft); border-color: var(--brand); color: var(--brand); }
+.d-empty { color: var(--t2); font-size: 13px; text-align: center; padding: 20px 0px; }
+#modal-mask { position: fixed; inset: 0px; background: rgba(15, 20, 30, 0.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+#modal { background: rgb(255, 255, 255); border-radius: 16px; width: 100%; max-width: 400px; padding: 20px; }
+#modal h3 { font-size: 16px; margin-bottom: 12px; }
+#modal input, #modal textarea { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 16px; color: var(--t1); }
+#modal input:focus, #modal textarea:focus { outline: none; border-color: var(--brand); }
+#modal textarea { font-size: 12px; font-family: Consolas, monospace; resize: vertical; }
+#modal .m-hint { font-size: 12px; color: var(--t2); margin-bottom: 10px; }
+.m-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+.m-btns .btn { height: 40px; padding: 0px 18px; font-size: 14px; }
+.m-btns .btn-ghost { height: 40px; }
+#toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(8px); background: rgba(28, 31, 38, 0.92); color: rgb(255, 255, 255); font-size: 14px; padding: 10px 18px; border-radius: 10px; opacity: 0; pointer-events: none; transition: 0.2s; z-index: 200; max-width: 80vw; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0px); }
+:root { --trae-layer-image-download: 89990; --trae-layer-browser-inspect-overlay: 90000; --trae-layer-browser-inspect-highlight: 90010; --trae-layer-browser-inspect-action: 90020; --trae-layer-text-selection-action: 90030; --trae-layer-edit-tooltip: 100095; }
+:root, [data-trae-theme="dark"] { --trae-bg-base-default: #171717; --trae-bg-menu: #222427; --trae-bg-overlay-l1: rgba(255, 255, 255, 0.04); --trae-bg-overlay-l2: rgba(255, 255, 255, 0.08); --trae-bg-overlay-l3: rgba(255, 255, 255, 0.12); --trae-bg-overlay-l4: rgba(255, 255, 255, 0.16); --trae-bg-invert: #f5f9fe; --trae-bg-invert-hover: #e8ecf0; --trae-bg-invert-active: #dce0e4; --trae-bg-invert-disabled: rgba(224, 226, 242, 0.12); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.35); --bg-bg-brand-popup: rgba(106, 111, 255, 0.15); --trae-border-l1: #e0e2f217; --trae-border-l2: rgba(255, 255, 255, 0.12); --trae-border-l3: rgba(255, 255, 255, 0.08); --trae-border-neutral-l3: rgba(229, 229, 229, 0.20); --trae-border-brand: #6a6fff; --trae-text-default: #f5f9fe; --trae-text-default-hover: #f5f9fe; --trae-text-default-active: #f5f9fe; --trae-text-secondary: rgba(245, 249, 254, 0.5); --trae-text-tertiary: rgba(245, 249, 254, 0.4); --trae-text-disabled: #666b75; --trae-text-onaccent: #222427; --trae-icon-default: #f5f9fe; --trae-icon-secondary: rgba(245, 249, 254, 0.5); --trae-icon-brand: #6a6fff; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #222427; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #387bff; --trae-status-primary-surface-l1: rgba(53, 121, 255, 0.18); --trae-status-success-default: #33c192; --trae-status-success-surface-l1: rgba(0, 165, 110, 0.18); --trae-status-error-default: #f65a5a; --trae-status-error-surface-l1: rgba(246, 70, 70, 0.18); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.32); --trae-panel-shadow: 0px 6px 24px -1px rgba(0, 0, 0, 0.16); --trae-floating-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(0, 0, 0, 0.45); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(106, 111, 255, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+[data-trae-theme="light"] { --trae-bg-base-default: #fafafa; --trae-bg-menu: #ffffff; --trae-bg-overlay-l1: rgba(0, 0, 0, 0.04); --trae-bg-overlay-l2: rgba(0, 0, 0, 0.06); --trae-bg-overlay-l3: rgba(0, 0, 0, 0.08); --trae-bg-overlay-l4: rgba(0, 0, 0, 0.12); --trae-bg-invert: #1f2328; --trae-bg-invert-hover: #32383f; --trae-bg-invert-active: #444d56; --trae-bg-invert-disabled: rgba(115, 115, 115, 0.20); --bg-bg-brand-disabled: rgba(75, 63, 227, 0.22); --bg-bg-brand-popup: rgba(170, 183, 255, 0.36); --trae-border-l1: rgba(0, 0, 0, 0.1); --trae-border-l2: rgba(0, 0, 0, 0.12); --trae-border-l3: rgba(0, 0, 0, 0.08); --trae-border-neutral-l3: rgba(115, 115, 115, 0.36); --trae-border-brand: #4b3fe3; --trae-text-default: #1f2328; --trae-text-default-hover: #111214; --trae-text-default-active: #111214; --trae-text-secondary: rgba(31, 35, 40, 0.5); --trae-text-tertiary: rgba(31, 35, 40, 0.4); --trae-text-disabled: #a1a1a1; --trae-text-onaccent: #ffffff; --trae-icon-default: #1f2328; --trae-icon-secondary: rgba(31, 35, 40, 0.5); --trae-icon-brand: #4b3fe3; --icon-icon-brand: var(--trae-icon-brand); --trae-icon-onaccent: #ffffff; --trae-status-success: #22c55e; --trae-status-primary: #3b82f6; --trae-status-primary-default: #2f74ff; --trae-status-primary-surface-l1: rgba(47, 116, 255, 0.12); --trae-status-success-default: #15a877; --trae-status-success-surface-l1: rgba(64, 176, 139, 0.12); --trae-status-error-default: #e8463a; --trae-status-error-surface-l1: rgba(232, 70, 58, 0.12); --trae-annotation-marker-bg: #4b3fe3; --trae-annotation-marker-text: #ffffff; --trae-annotation-region-border: var(--trae-status-primary-default); --trae-region-outside-mask-bg: rgba(0, 0, 0, 0.18); --trae-panel-shadow: 0px 6px 24px -1px rgba(24, 24, 24, 0.06); --trae-floating-shadow: 0px 2px 8px 0px rgba(24, 24, 24, 0.2); --trae-shadow-elevation-50: 0 1px 2px -1px rgba(24, 24, 24, 0.08); --text-text-default: var(--trae-text-default); --text-text-onaccent: var(--trae-text-onaccent); --bg-bg-menu: var(--trae-bg-menu); --bg-bg-white: var(--trae-bg-menu); --bg-bg-invert: var(--trae-bg-invert); --bg-bg-invert-disabled: var(--trae-bg-invert-disabled); --bg-bg-overlay-l1: var(--trae-bg-overlay-l1); --bg-bg-overlay-l2: var(--trae-bg-overlay-l2); --bg-bg-overlay-l3: var(--trae-bg-overlay-l3); --border-border-neutral-l1: var(--trae-border-l1); --border-border-brand: var(--trae-border-brand); --border-border-brand-half: rgba(75, 63, 227, 0.4); --status-error-default: var(--trae-status-error-default); --status-error-surface-l1: var(--trae-status-error-surface-l1); --radius-radius-md-12: 12px; --spacers-spacer-0: 0; --spacers-spacer-6: 6px; }
+@keyframes trae-spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes trae-edit-bar-enter { 
+  0% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+@keyframes trae-edit-bar-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+@keyframes trae-edit-panel-leave { 
+  0% { opacity: 1; transform: translateY(0px) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+.trae-edit-mode-active:not(.trae-edit-mode-dragging) body :not([data-trae-edit-ui]):not([data-trae-edit-ui] *) { transition: none !important; animation-play-state: paused !important; }
+.trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel), .trae-edit-mode-reorder-hit-test [data-trae-edit-ui]:not(.trae-edit-pointer-shield):not(.trae-edit-panel) * { pointer-events: none !important; }
+.trae-browser-inspect-overlay { position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: var(--trae-layer-browser-inspect-overlay); pointer-events: auto; background: transparent; }
+.trae-browser-inspect-highlight-box { position: absolute; top: 0px; left: 0px; z-index: var(--trae-layer-browser-inspect-highlight); display: none; }
+.trae-browser-inspect-highlight-tag { position: absolute; left: 0px; top: 0px; height: 18px; padding: 0px 6px; box-sizing: border-box; border-radius: 4px; background-color: var(--trae-status-success-default); color: var(--trae-text-onaccent); font-size: 12px; font-weight: 400; display: none; align-items: center; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-highlight-box-show { display: flex; }
+.trae-browser-inspect-highlight-tag.trae-browser-inspect-highlight-box-show { display: none; }
+.trae-browser-inspect-select-button.trae-browser-inspect-highlight-box-show { display: block !important; }
+.trae-browser-inspect-select-button { position: absolute; top: 0px; left: 0px; display: none; z-index: var(--trae-layer-browser-inspect-action); }
+.trae-browser-inspect-select-highlight-box { background: transparent !important; }
+.trae-browser-inspect-select-highlight-box .trae-browser-inspect-highlight-tag { background-color: var(--trae-status-success-default); }
+.trae-add-to-chat-card { display: block; overflow: hidden; background: var(--trae-bg-menu); border: 1px solid var(--trae-border-l1); border-radius: 8px; box-shadow: var(--trae-floating-shadow); transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), height 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+.trae-add-to-chat-content { position: relative; width: max-content; }
+.trae-fade-exit { opacity: 0; transition: opacity 0.15s ease-out; }
+.trae-fade-enter { opacity: 1; transition: opacity 0.2s ease-in; }
+.trae-buttons-view { display: flex; align-items: center; gap: 6px; padding: 4px; background: transparent; }
+.trae-action-button { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: transparent; border: none; border-radius: 4px; cursor: pointer; transform: none !important; transition: none !important; animation: auto ease 0s 1 normal none running none !important; }
+.trae-action-button:hover { background: var(--trae-bg-overlay-l2); }
+.trae-action-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-action-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-action-button-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-icon-default); flex-shrink: 0; }
+.trae-action-button-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; }
+.trae-edit-toolbar-button-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, #4b3fe3) !important; font-weight: bold !important; }
+.trae-edit-toolbar-button-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:hover, .trae-edit-toolbar button[data-action="text-align-dropdown"]:hover, .trae-edit-toolbar button[data-action="font-decrease"]:hover, .trae-edit-toolbar button[data-action="font-increase"]:hover, .trae-edit-toolbar button[data-action^="align-"]:hover { border-radius: 8px; background: var(--bg-bg-overlay-l1, rgba(115, 115, 115, 0.08)) !important; }
+.trae-edit-toolbar button[data-action="alignment-dropdown"]:active, .trae-edit-toolbar button[data-action="text-align-dropdown"]:active, .trae-edit-toolbar button[data-action="font-decrease"]:active, .trae-edit-toolbar button[data-action="font-increase"]:active, .trae-edit-toolbar button[data-action^="align-"]:active { border-radius: 8px; background: var(--bg-bg-overlay-l2, rgba(115, 115, 115, 0.12)) !important; }
+.trae-comment-input { background: transparent; color: var(--trae-text-default); caret-color: var(--trae-text-default); }
+.trae-comment-input::placeholder { color: var(--trae-text-tertiary); }
+.trae-point-edit-bar, .trae-point-comment-input-bar, .trae-comment-only-panel { transform-origin: center top; will-change: opacity, transform; }
+.trae-edit-panel:not(.trae-edit-panel-leave) { pointer-events: auto !important; }
+.trae-edit-bar-enter { animation: trae-edit-bar-enter var(--transition-normal, 0.18s cubic-bezier(0.2, 0, 0, 1)) both; }
+.trae-edit-bar-leave { pointer-events: none; animation: trae-edit-bar-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel-leave { pointer-events: none; animation: trae-edit-panel-leave var(--transition-fast, 0.14s ease) both; }
+.trae-edit-panel [data-trae-tooltip] { position: relative; }
+.trae-edit-panel [data-trae-tooltip]::after { content: attr(data-trae-tooltip); position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: var(--trae-layer-edit-tooltip); padding: 6px 10px; border-radius: 6px; background: var(--trae-bg-invert, var(--bg-bg-invert)); color: var(--trae-text-onaccent, var(--text-text-onaccent)); box-shadow: var(--trae-floating-shadow); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; letter-spacing: 0.039px; white-space: nowrap; pointer-events: none; box-sizing: border-box; opacity: 0; transform: translateX(-50%); visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]::before { content: ""; position: absolute; left: 50%; bottom: calc(100% + 5px); z-index: var(--trae-layer-edit-tooltip); width: 8px; height: 4px; background: var(--trae-bg-invert, var(--bg-bg-invert)); clip-path: polygon(0px 0px, 100% 0px, 50% 100%); transform: translateX(-50%); pointer-events: none; opacity: 0; visibility: hidden; }
+.trae-edit-panel [data-trae-tooltip]:hover::after, .trae-edit-panel [data-trae-tooltip]:focus-visible::after, .trae-edit-panel [data-trae-tooltip]:hover::before, .trae-edit-panel [data-trae-tooltip]:focus-visible::before { opacity: 1; visibility: visible; }
+.trae-comment-btn { justify-content: center; cursor: pointer; transition: background-color 0.15s; }
+.trae-comment-btn:disabled { cursor: not-allowed; }
+.trae-comment-btn:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-comment-btn-primary { background: var(--trae-bg-invert); color: var(--trae-text-onaccent); }
+.trae-comment-btn-primary:hover:not(:disabled) { background: var(--trae-bg-invert-hover); }
+.trae-comment-btn-primary:active:not(:disabled) { background: var(--trae-bg-invert-active); }
+.trae-comment-btn-primary:disabled { background: var(--trae-bg-invert-disabled); color: var(--trae-text-disabled); }
+.trae-comment-btn-secondary { background: var(--trae-bg-overlay-l2); color: var(--trae-text-default); }
+.trae-comment-btn-secondary:hover:not(:disabled) { background: var(--trae-bg-overlay-l3); }
+.trae-comment-btn-secondary:active:not(:disabled) { background: var(--trae-bg-overlay-l4); }
+.trae-comment-btn-secondary:disabled { background: var(--trae-bg-overlay-l2); color: var(--trae-text-disabled); }
+.trae-comment-btn-text { background: transparent; color: var(--trae-text-default); }
+.trae-comment-btn-text:hover:not(:disabled) { border-radius: 8px; background: var(--bg-bg-overlay-l1, var(--trae-bg-overlay-l1)); color: var(--trae-text-default-hover); }
+.trae-comment-btn-text:active:not(:disabled) { border-radius: 8px; background: var(--trae-bg-overlay-l2); color: var(--trae-text-default-active); }
+.trae-comment-btn-text:disabled { background: transparent; color: var(--trae-text-disabled); }
+.trae-marking-btn { justify-content: center; }
+.trae-marking-btn:hover:not(:disabled) { background: var(--trae-bg-overlay-l1) !important; }
+.trae-marking-btn-active { background: var(--bg-bg-brand-disabled, rgba(75, 63, 227, 0.22)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn-active:hover { background: var(--bg-bg-brand-popup, rgba(170, 183, 255, 0.36)) !important; color: var(--icon-icon-brand, var(--trae-icon-brand)) !important; }
+.trae-marking-btn:active:not(:disabled) { background: var(--trae-bg-overlay-l2) !important; }
+.trae-marking-btn:disabled { color: var(--trae-text-disabled) !important; cursor: not-allowed !important; }
+.trae-action-button-shortcut { display: flex; align-items: center; gap: 2px; color: var(--trae-icon-secondary); flex-shrink: 0; }
+.trae-shortcut-container { display: flex; align-items: center; gap: 2px; }
+.trae-shortcut-key { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 12px; color: var(--trae-icon-secondary); }
+.trae-add-to-chat-divider { width: 2px; height: 12px; padding: 0px 6px; box-sizing: content-box; background-clip: content-box; background-color: var(--trae-border-l2); flex-shrink: 0; }
+.trae-editor-view { display: flex; flex-direction: column; width: 320px; padding: 8px; background: transparent; }
+.trae-editor-text-container { display: flex; align-items: center; padding: 8px; background: var(--trae-bg-overlay-l1); border: 1px solid var(--trae-border-l3); border-radius: 4px; gap: 8px; }
+.trae-editor-textarea { flex: 1 1 0%; padding: 0px 2px; border: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 400; line-height: 20px; color: var(--trae-text-default); resize: none; outline: none; overflow-y: auto; max-height: 140px; }
+.trae-editor-textarea::placeholder { color: var(--trae-text-tertiary); }
+.trae-editor-action-bar { display: flex; align-items: center; justify-content: flex-end; gap: 4px; max-height: 0px; opacity: 0; overflow: hidden; transition: max-height 0.2s ease-out, opacity 0.2s ease-out, margin-top 0.2s ease-out; }
+.trae-editor-action-bar-visible { max-height: 32px; opacity: 1; margin-top: 8px; }
+.trae-editor-cancel-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 4px; background: var(--trae-bg-overlay-l2); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-cancel-button:hover { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:active { background: var(--trae-bg-overlay-l3); }
+.trae-editor-cancel-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-cancel-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-default); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-button { display: flex; align-items: center; justify-content: center; height: 24px; padding: 0px 8px; background: var(--trae-bg-invert); border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.15s; }
+.trae-editor-submit-button:hover { background: var(--trae-bg-invert-hover); }
+.trae-editor-submit-button:active { background: var(--trae-bg-invert-active); }
+.trae-editor-submit-button:focus-visible { outline: 2px solid var(--trae-status-primary); outline-offset: 1px; }
+.trae-editor-submit-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--trae-text-onaccent); white-space: nowrap; padding: 0px 4px; }
+.trae-editor-submit-icon { display: flex; align-items: center; justify-content: center; width: 12px; height: 12px; color: var(--trae-icon-onaccent); flex-shrink: 0; }
+.trae-success-view { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0px 12px; height: 32px; white-space: nowrap; }
+.trae-success-icon { display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: var(--trae-status-success); flex-shrink: 0; }
+.trae-success-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 400; line-height: 18px; color: var(--trae-text-default); user-select: none; }</style></head>
+<body>
+<div id="app">
+  <main id="page-train" class="page"><div class="t-head"><div class="t-date">10月20日 周二</div><span class="pill pill-gray">未训练</span></div><div class="hero card"><h2>今天还没有训练</h2><p>选几个动作，记录每一组的重量和次数</p><button class="btn" data-act="begin">开始训练</button></div></main>
+  <main id="page-history" class="page hidden"></main>
+  <main id="page-library" class="page hidden"></main>
+</div>
+
+<nav id="tabbar">
+  <button class="tab on" data-tab="train">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11M1.5 12h2M20.5 12h2"></path></svg>
+    训练</button>
+  <button class="tab" data-tab="history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2.5"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+    历史</button>
+  <button class="tab" data-tab="library">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2.5"></rect><path d="M8 9h8M8 13h8M8 17h5"></path></svg>
+    动作库</button>
+</nav>
+
+<div id="drawer-mask" class="hidden"></div>
+<div id="drawer">
+  <div class="d-h"><span>添加动作</span><span class="x" data-act="drawer-close">×</span></div>
+  <div class="d-list" id="drawer-list"></div>
+</div>
+
+<div id="modal-mask" class="hidden"><div id="modal"><div id="modal-body"></div></div></div>
+<div id="toast"></div>
+
+<script>
+'use strict'
+/* ================= 工具 ================= */
+var $ = function(s){ return document.querySelector(s) }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] }) }
+function pad(n){ return n < 10 ? '0' + n : '' + n }
+function fmtDate(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) }
+function todayStr(){ return fmtDate(new Date()) }
+var WEEK = '日一二三四五六'
+function dateText(ds){
+  var p = ds.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2])
+  return +p[1] + '月' + p[2] + '日 周' + WEEK[d.getDay()]
+}
+function shortDate(ds){ var p = ds.split('-'); return +p[1] + '/' + +p[2] }
+function genId(){ return 'ex_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6) }
+function deep(o){ return JSON.parse(JSON.stringify(o)) }
+function trimNum(n){ n = Number(n); return n % 1 ? String(Math.round(n * 100) / 100) : String(n) }
+function perfTxt(w, r){ return (Number(w) > 0 ? trimNum(w) + 'kg' : '自重') + ' × ' + r }
+function totalSets(w){ return w.items.reduce(function(n, i){ return n + i.sets.length }, 0) }
+
+/* ================= 本地数据层（localStorage） ================= */
+var EX_KEY = 'fc_exercises', WK_KEY = 'fc_workouts', DRAFT_KEY = 'fc_draft'
+function lsGet(k, def){
+  try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? def : v } catch (e) { return def }
+}
+function lsSet(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { toast('保存失败：本地存储不可用') }
+}
+
+var PARTS = ['胸', '背', '腿', '肩', '臂', '核心', '有氧', '其他']
+var DEFAULT_EXERCISES = [
+  { id: 'ex_bench', name: '卧推', part: '胸' },
+  { id: 'ex_incline', name: '上斜卧推', part: '胸' },
+  { id: 'ex_fly', name: '飞鸟', part: '胸' },
+  { id: 'ex_pullup', name: '引体向上', part: '背' },
+  { id: 'ex_row', name: '划船', part: '背' },
+  { id: 'ex_deadlift', name: '硬拉', part: '背' },
+  { id: 'ex_squat', name: '深蹲', part: '腿' },
+  { id: 'ex_lunge', name: '箭步蹲', part: '腿' },
+  { id: 'ex_legpress', name: '倒蹬', part: '腿' },
+  { id: 'ex_ohp', name: '推举', part: '肩' },
+  { id: 'ex_latraise', name: '侧平举', part: '肩' },
+  { id: 'ex_curl', name: '弯举', part: '臂' },
+  { id: 'ex_pushdown', name: '绳索下压', part: '臂' },
+  { id: 'ex_plank', name: '平板支撑', part: '核心' },
+  { id: 'ex_crunch', name: '卷腹', part: '核心' },
+  { id: 'ex_run', name: '跑步', part: '有氧' },
+  { id: 'ex_rope', name: '跳绳', part: '有氧' }
+]
+
+/* ---------- 动作库 ---------- */
+function getExercises(){
+  var l = lsGet(EX_KEY, null)
+  if (!l || !l.length) { l = deep(DEFAULT_EXERCISES); lsSet(EX_KEY, l) }
+  return l
+}
+function saveExercises(l){ lsSet(EX_KEY, l) }
+function addExercise(name, part){
+  name = (name || '').trim()
+  if (!name) return { ok: false, msg: '请输入动作名称' }
+  var list = getExercises()
+  if (list.some(function(e){ return e.name === name })) return { ok: false, msg: '动作已存在' }
+  var item = { id: genId(), name: name, part: part || '其他' }
+  list.push(item); saveExercises(list)
+  return { ok: true, item: item }
+}
+function renameExercise(id, name){
+  name = (name || '').trim()
+  if (!name) return { ok: false, msg: '名称不能为空' }
+  var list = getExercises(), it = null
+  for (var i = 0; i < list.length; i++) if (list[i].id === id) it = list[i]
+  if (!it) return { ok: false, msg: '动作不存在' }
+  for (var j = 0; j < list.length; j++) if (list[j].id !== id && list[j].name === name) return { ok: false, msg: '动作已存在' }
+  it.name = name; saveExercises(list)
+  return { ok: true }
+}
+function removeExercise(id){ saveExercises(getExercises().filter(function(e){ return e.id !== id })) }
+function groupByPart(list){
+  var groups = PARTS.map(function(p){ return { part: p, items: list.filter(function(e){ return e.part === p }) } })
+  list.forEach(function(e){
+    if (PARTS.indexOf(e.part) < 0) {
+      var g = null
+      for (var i = 0; i < groups.length; i++) if (groups[i].part === e.part) g = groups[i]
+      if (!g) { g = { part: e.part, items: [] }; groups.push(g) }
+      g.items.push(e)
+    }
+  })
+  return groups.filter(function(g){ return g.items.length })
+}
+
+/* ---------- 训练记录 ---------- */
+function getWorkouts(){
+  var l = lsGet(WK_KEY, [])
+  return l.slice().sort(function(a, b){ return a.date < b.date ? 1 : -1 })
+}
+function getWorkout(date){
+  var l = getWorkouts()
+  for (var i = 0; i < l.length; i++) if (l[i].date === date) return l[i]
+  return null
+}
+function saveWorkout(w){
+  var l = lsGet(WK_KEY, []), i = l.findIndex(function(x){ return x.date === w.date })
+  if (i >= 0) l[i] = w; else l.push(w)
+  lsSet(WK_KEY, l)
+}
+function removeWorkout(date){ lsSet(WK_KEY, getWorkouts().filter(function(w){ return w.date !== date })) }
+function workoutVolume(w){
+  var v = 0
+  w.items.forEach(function(it){
+    it.sets.forEach(function(s){ v += (Number(s.weight) || 0) * (Number(s.reps) || 0) })
+  })
+  return Math.round(v)
+}
+function getLastPerformance(exerciseId, excludeDate){
+  var list = getWorkouts()
+  for (var i = 0; i < list.length; i++) {
+    var w = list[i]
+    if (w.date === excludeDate) continue
+    var it = null
+    for (var j = 0; j < w.items.length; j++) if (w.items[j].exerciseId === exerciseId) it = w.items[j]
+    if (it && it.sets.length) {
+      var best = it.sets[0]
+      it.sets.forEach(function(s){ if ((Number(s.weight) || 0) > (Number(best.weight) || 0)) best = s })
+      return { date: w.date, weight: Number(best.weight) || 0, reps: Number(best.reps) || 0 }
+    }
+  }
+  return null
+}
+
+/* ---------- 草稿（切页面不丢，跨天作废） ---------- */
+function getDraft(){ return lsGet(DRAFT_KEY, null) }
+function saveDraft(d){ lsSet(DRAFT_KEY, d) }
+function clearDraft(){ try { localStorage.removeItem(DRAFT_KEY) } catch (e) {} }
+
+/* ---------- 统计与热力图 ---------- */
+function getStats(){
+  var list = getWorkouts(), now = new Date()
+  var monthPrefix = now.getFullYear() + '-' + pad(now.getMonth() + 1)
+  var weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  var ws = fmtDate(weekStart), today = fmtDate(now)
+  return {
+    total: list.length,
+    month: list.filter(function(w){ return w.date.indexOf(monthPrefix) === 0 }).length,
+    week: list.filter(function(w){ return w.date >= ws && w.date <= today }).length
+  }
+}
+function buildHeatmap(weeks){
+  weeks = weeks || 15
+  var now = new Date(), start = new Date(now)
+  start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - (weeks - 1) * 7)
+  var volMap = {}
+  getWorkouts().forEach(function(w){ volMap[w.date] = workoutVolume(w) })
+  var today = fmtDate(now), cols = []
+  for (var c = 0; c < weeks; c++) {
+    var days = []
+    for (var r = 0; r < 7; r++) {
+      var d = new Date(start)
+      d.setDate(start.getDate() + c * 7 + r)
+      var ds = fmtDate(d)
+      days.push({ date: ds, vol: volMap[ds] || 0, future: ds > today, isToday: ds === today })
+    }
+    cols.push({ key: 'w' + c, days: days })
+  }
+  return cols
+}
+
+/* ---------- 导出 / 导入 ---------- */
+function exportJSON(){
+  return JSON.stringify({
+    exportedAt: todayStr(),
+    exercises: getExercises(),
+    workouts: getWorkouts()
+  }, null, 2)
+}
+function importData(text){
+  var data = JSON.parse(text)
+  if (!data || !Array.isArray(data.workouts)) throw new Error('备份格式不正确')
+  var exs = getExercises(), exAdded = 0
+  ;(Array.isArray(data.exercises) ? data.exercises : []).forEach(function(e){
+    if (e && e.id && !exs.some(function(x){ return x.id === e.id })) {
+      exs.push({ id: e.id, name: e.name || '未命名', part: e.part || '其他' }); exAdded++
+    }
+  })
+  saveExercises(exs)
+  var cur = lsGet(WK_KEY, []), days = 0
+  data.workouts.forEach(function(w){
+    if (!w || !w.date || !/^\d{4}-\d{2}-\d{2}$/.test(w.date)) return
+    var items = (Array.isArray(w.items) ? w.items : []).map(function(it){
+      return {
+        exerciseId: it.exerciseId || '', name: it.name || '未知动作', part: it.part || '其他',
+        sets: (Array.isArray(it.sets) ? it.sets : []).map(function(s){
+          return { weight: Number(s.weight) || 0, reps: Number(s.reps) || 0 }
+        })
+      }
+    }).filter(function(it){ return it.sets.length })
+    if (!items.length) return
+    days++
+    var i = cur.findIndex(function(x){ return x.date === w.date })
+    if (i < 0) { cur.push({ date: w.date, items: items }) }
+    else {
+      items.forEach(function(it){
+        var j = cur[i].items.findIndex(function(x){ return x.exerciseId === it.exerciseId })
+        if (j >= 0) cur[i].items[j] = it; else cur[i].items.push(it)
+      })
+    }
+  })
+  lsSet(WK_KEY, cur)
+  return { days: days, exAdded: exAdded }
+}
+
+/* ================= 状态与渲染 ================= */
+var state = {
+  tab: 'train',
+  train: null,          // 进行中的训练草稿 {date, items:[{exerciseId,name,part,sets:[{weight,reps}]}]}
+  activeIdx: -1,        // 当前激活的动作卡
+  iv: { w: '', r: '' }, // 当前输入中的重量/次数
+  histDetail: null,     // 热力图点选的日期
+  expanded: null        // 历史列表展开的日期
+}
+
+function persist(){ if (state.train) saveDraft(state.train) }
+function checkDraft(){
+  var t = todayStr()
+  if (state.train && state.train.date !== t) { state.train = null; clearDraft(); state.activeIdx = -1 }
+}
+function prefillFor(it){
+  if (it.sets.length) {
+    var s = it.sets[it.sets.length - 1]
+    return { w: s.weight > 0 ? trimNum(s.weight) : '', r: String(s.reps) }
+  }
+  var lp = getLastPerformance(it.exerciseId, state.train.date)
+  if (lp) return { w: lp.weight > 0 ? trimNum(lp.weight) : '', r: String(lp.reps) }
+  return { w: '', r: '' }
+}
+
+/* ---------- 训练页 ---------- */
+function renderTrain(){
+  checkDraft()
+  var el = $('#page-train'), today = todayStr(), saved = getWorkout(today)
+  if (!state.train) {
+    var inner
+    if (saved) {
+      inner = '<div class="hero card"><h2>今日已打卡</h2>' +
+        '<p>' + saved.items.length + '个动作 · ' + totalSets(saved) + '组 · ' + workoutVolume(saved) + ' kg</p>' +
+        '<button class="btn" data-act="begin">编辑今日训练</button></div>'
+    } else {
+      inner = '<div class="hero card"><h2>今天还没有训练</h2>' +
+        '<p>选几个动作，记录每一组的重量和次数</p>' +
+        '<button class="btn" data-act="begin">开始训练</button></div>'
+    }
+    el.innerHTML = '<div class="t-head"><div class="t-date">' + dateText(today) + '</div>' +
+      '<span class="pill ' + (saved ? 'pill-green' : 'pill-gray') + '">' + (saved ? '已打卡 ✓' : '未训练') + '</span></div>' + inner
+    return
+  }
+  var t = state.train
+  var h = '<div class="t-head"><div class="t-date">' + dateText(today) + '</div>' +
+    '<span class="pill pill-green">训练中</span></div>' +
+    '<p class="hint">点击卡片切到对应动作，记录每组重量与次数</p>'
+  if (!t.items.length) h += '<div class="card empty-card">还没有添加动作，点下面「＋ 添加动作」</div>'
+  t.items.forEach(function(it, i){ h += exCardHTML(it, i) })
+  h += '<button class="add-ex" data-act="drawer-open">＋ 添加动作</button>'
+  h += '<div class="t-foot"><div class="t-sum">' + t.items.length + '个动作 · ' + totalSets(t) + '组 · 容量 ' + workoutVolume(t) + ' kg</div>' +
+    '<button class="btn btn-block" data-act="complete">完成训练</button></div>'
+  el.innerHTML = h
+}
+function exCardHTML(it, i){
+  var active = i === state.activeIdx
+  var lp = getLastPerformance(it.exerciseId, state.train.date)
+  var lastTxt = lp ? '上次 ' + shortDate(lp.date) + ' · ' + perfTxt(lp.weight, lp.reps) : '首次记录这个动作'
+  var setsH = ''
+  it.sets.forEach(function(s, si){
+    setsH += '<div class="set-row"><span class="n">第' + (si + 1) + '组</span><span>' + perfTxt(s.weight, s.reps) + '</span>' +
+      '<span class="x" data-act="set-del" data-idx="' + i + '" data-si="' + si + '">×</span></div>'
+  })
+  var editH = ''
+  if (active) {
+    editH = '<div class="inp-row">' +
+      '<input id="inp-w" type="number" inputmode="decimal" step="0.5" min="0" placeholder="重量kg" value="' + esc(state.iv.w) + '">' +
+      '<input id="inp-r" type="number" inputmode="numeric" min="1" placeholder="次数" value="' + esc(state.iv.r) + '">' +
+      '<button class="btn" data-act="add-set">＋1 组</button></div>'
+  }
+  var tapAct = active ? 'noop' : 'card-act'
+  return '<div class="card ex-card' + (active ? ' act' : '') + '">' +
+    '<div class="ex-h" data-act="' + tapAct + '" data-idx="' + i + '">' +
+    '<span class="ex-name">' + esc(it.name) + '</span><span class="tag">' + esc(it.part) + '</span>' +
+    '<span class="x" data-act="card-del" data-idx="' + i + '">×</span></div>' +
+    '<div class="ex-last" data-act="' + tapAct + '" data-idx="' + i + '">' + lastTxt + '</div>' +
+    (setsH ? '<div class="sets">' + setsH + '</div>' : '') +
+    editH + '</div>'
+}
+function beginTraining(){
+  var today = todayStr(), saved = getWorkout(today)
+  state.train = saved ? deep(saved) : { date: today, items: [] }
+  state.activeIdx = -1; state.iv = { w: '', r: '' }
+  persist(); renderTrain()
+}
+function completeTraining(){
+  var t = state.train
+  if (!totalSets(t)) { toast('至少记录一组才能完成训练'); return }
+  saveWorkout(t); clearDraft()
+  state.train = null; state.activeIdx = -1; state.iv = { w: '', r: '' }
+  renderTrain(); toast('打卡成功！')
+}
+function addSet(){
+  var it = state.train.items[state.activeIdx]
+  if (!it) return
+  var rEl = $('#inp-r'), wEl = $('#inp-w')
+  var reps = parseInt(rEl ? rEl.value : '', 10)
+  if (!(reps > 0)) { toast('请填写每组次数'); return }
+  var w = parseFloat(wEl ? wEl.value : '')
+  if (isNaN(w) || w < 0) w = 0
+  it.sets.push({ weight: Math.round(w * 100) / 100, reps: reps })
+  state.iv = prefillFor(it)
+  persist(); renderTrain()
+}
+
+/* ---------- 添加动作抽屉 ---------- */
+function openDrawer(){
+  if (!state.train) return
+  var sel = {}
+  state.train.items.forEach(function(x){ sel[x.exerciseId] = true })
+  var h = ''
+  groupByPart(getExercises()).forEach(function(g){
+    h += '<div class="d-part">' + esc(g.part) + '</div><div class="d-rows">'
+    g.items.forEach(function(e){
+      h += '<button class="d-row' + (sel[e.id] ? ' sel' : '') + '" data-act="drawer-add" data-id="' + e.id + '">' + esc(e.name) + '</button>'
+    })
+    h += '</div>'
+  })
+  if (!h) h = '<div class="d-empty">动作库是空的，先去动作库添加</div>'
+  $('#drawer-list').innerHTML = h
+  $('#drawer-mask').classList.remove('hidden')
+  $('#drawer').classList.add('open')
+}
+function closeDrawer(){
+  $('#drawer-mask').classList.add('hidden')
+  $('#drawer').classList.remove('open')
+}
+function drawerAdd(id){
+  if (!state.train) { closeDrawer(); return }
+  var ex = null
+  getExercises().forEach(function(e){ if (e.id === id) ex = e })
+  if (!ex) return
+  var exists = state.train.items.some(function(x){ return x.exerciseId === id })
+  if (exists) { toast('已添加该动作'); return }
+  var item = { exerciseId: ex.id, name: ex.name, part: ex.part, sets: [] }
+  state.train.items.push(item)
+  state.activeIdx = state.train.items.length - 1
+  state.iv = prefillFor(item)
+  persist(); closeDrawer(); renderTrain()
+}
+
+/* ---------- 历史页 ---------- */
+function renderHistory(){
+  var el = $('#page-history'), s = getStats()
+  var h = '<div class="t-head"><div class="t-date">训练历史</div></div>'
+  h += '<div class="stats">' +
+    '<div class="stat"><b>' + s.total + '</b><span>累计打卡</span></div>' +
+    '<div class="stat"><b>' + s.month + '</b><span>本月</span></div>' +
+    '<div class="stat"><b>' + s.week + '</b><span>本周</span></div></div>'
+  h += '<div class="card"><div class="c-title">打卡热力图<span class="c-sub">近 15 周</span></div><div class="heat-wrap"><div class="heat-grid">'
+  var cols = buildHeatmap(15), max = 1
+  cols.forEach(function(c){ c.days.forEach(function(d){ if (d.vol > max) max = d.vol }) })
+  cols.forEach(function(c){
+    c.days.forEach(function(d){
+      var lv = d.vol === 0 ? 0 : 1 + Math.min(3, Math.floor(d.vol / max * 4))
+      if (d.future) { h += '<i class="hc fut"></i>'; return }
+      h += '<i class="hc lv' + lv + (d.isToday ? ' today' : '') + '" data-act="cell" data-date="' + d.date + '" title="' + d.date + (d.vol ? ' · ' + d.vol + 'kg' : '') + '"></i>'
+    })
+  })
+  h += '</div></div><div class="heat-legend">少 <i class="hc lv0"></i><i class="hc lv1"></i><i class="hc lv2"></i><i class="hc lv3"></i><i class="hc lv4"></i> 多</div>'
+  if (state.histDetail) h += dayDetailHTML(state.histDetail)
+  h += '</div>'
+
+  h += '<div class="c-title" style="margin:18px 2px 10px">训练记录</div>'
+  var list = getWorkouts()
+  if (!list.length) h += '<div class="card empty-card">还没有训练记录</div>'
+  list.forEach(function(w){
+    var open = state.expanded === w.date
+    h += '<div class="card" style="padding:14px 16px">' +
+      '<div class="rec-h" data-act="row-toggle" data-date="' + w.date + '">' +
+      '<div><b>' + dateText(w.date) + '</b><span class="sub">' + w.items.length + '个动作 · ' + totalSets(w) + '组 · ' + workoutVolume(w) + ' kg</span></div>' +
+      '<span class="chev' + (open ? ' open' : '') + '">›</span></div>'
+    if (open) {
+      w.items.forEach(function(it){
+        h += '<div class="rec-ex"><b>' + esc(it.name) + '</b><span class="tag">' + esc(it.part) + '</span>' +
+          '<div class="rec-setline">' + (it.sets.map(function(s){ return perfTxt(s.weight, s.reps) }).join(' · ') || '无记录') + '</div></div>'
+      })
+      h += '<button class="btn-danger-txt rec-del" data-act="day-del" data-date="' + w.date + '">删除这天记录</button>'
+    }
+    h += '</div>'
+  })
+  h += '<div class="card"><div class="c-title">备份与恢复</div><div class="bk-btns">' +
+    '<button class="btn-ghost" data-act="exp-copy">复制备份</button>' +
+    '<button class="btn-ghost" data-act="exp-dl">下载备份</button>' +
+    '<button class="btn-ghost" data-act="imp-open">导入数据</button></div>' +
+    '<p class="bk-hint">数据只保存在本机浏览器里，换设备或清缓存前记得先备份</p></div>'
+  el.innerHTML = h
+}
+function dayDetailHTML(date){
+  var w = getWorkout(date)
+  var h = '<div class="dd"><b>' + dateText(date) + '</b>'
+  if (!w || !w.items.some(function(i){ return i.sets.length })) {
+    return h + '<div class="rec-setline" style="margin-top:4px">这天没有训练记录</div></div>'
+  }
+  w.items.forEach(function(it){
+    if (!it.sets.length) return
+    h += '<div class="rec-ex" style="border:none;padding:7px 0 0;margin-top:7px"><b>' + esc(it.name) + '</b><span class="tag">' + esc(it.part) + '</span>' +
+      '<div class="rec-setline">' + it.sets.map(function(s){ return perfTxt(s.weight, s.reps) }).join(' · ') + '</div></div>'
+  })
+  h += '<div class="rec-setline" style="margin-top:6px">容量 ' + workoutVolume(w) + ' kg</div></div>'
+  return h
+}
+
+/* ---------- 动作库页 ---------- */
+function renderLibrary(){
+  var el = $('#page-library')
+  var h = '<div class="t-head"><div class="t-date">动作库</div></div>'
+  h += '<div class="card"><div class="lib-form">' +
+    '<input id="lib-name" placeholder="新动作名称" maxlength="10">' +
+    '<select id="lib-part">' + PARTS.map(function(p){ return '<option>' + p + '</option>' }).join('') + '</select>' +
+    '<button class="btn" data-act="lib-add">添加</button></div></div>'
+  groupByPart(getExercises()).forEach(function(g){
+    h += '<div class="g-title">' + esc(g.part) + '</div>'
+    g.items.forEach(function(e){
+      h += '<div class="lib-row" data-act="lib-edit" data-id="' + e.id + '"><span>' + esc(e.name) + '</span><span class="chev">›</span></div>'
+    })
+  })
+  h += '<p class="lib-hint">点击动作可改名或删除；删除动作不影响历史记录</p>'
+  el.innerHTML = h
+}
+function libAdd(){
+  var name = ($('#lib-name').value || '').trim()
+  var part = $('#lib-part').value
+  var r = addExercise(name, part)
+  if (!r.ok) { toast(r.msg); return }
+  renderLibrary(); toast('已添加')
+}
+
+/* ---------- 弹窗（改名 / 导入） ---------- */
+function openModal(html){ $('#modal-body').innerHTML = html; $('#modal-mask').classList.remove('hidden') }
+function closeModal(){ $('#modal-mask').classList.add('hidden') }
+function openRename(id){
+  var ex = null
+  getExercises().forEach(function(e){ if (e.id === id) ex = e })
+  if (!ex) return
+  openModal('<h3>编辑动作</h3><input id="re-name" maxlength="10" value="' + esc(ex.name) + '">' +
+    '<div class="m-btns">' +
+    '<button class="btn-ghost" data-act="modal-close">取消</button>' +
+    '<button class="btn-ghost danger" data-act="rename-del" data-id="' + id + '">删除</button>' +
+    '<button class="btn" data-act="rename-save" data-id="' + id + '">保存</button></div>')
+}
+function renameSave(id){
+  var r = renameExercise(id, ($('#re-name').value || '').trim())
+  if (!r.ok) { toast(r.msg); return }
+  closeModal(); renderLibrary(); toast('已保存')
+}
+function renameDel(id){
+  var ex = null
+  getExercises().forEach(function(e){ if (e.id === id) ex = e })
+  if (!confirm('删除动作「' + (ex ? ex.name : '') + '」？\n历史记录不受影响')) return
+  removeExercise(id); closeModal(); renderLibrary(); toast('已删除')
+}
+function openImport(){
+  openModal('<h3>导入备份</h3><p class="m-hint">粘贴之前导出的 JSON 内容，将与现有数据合并（同一天同一动作会覆盖为备份里的组）。</p>' +
+    '<textarea id="imp-txt" rows="9" placeholder=\'{"exportedAt":"2026-10-20", ...}\'></textarea>' +
+    '<div class="m-btns"><button class="btn-ghost" data-act="modal-close">取消</button>' +
+    '<button class="btn" data-act="imp-do">导入</button></div>')
+}
+function doImport(){
+  var txt = ($('#imp-txt').value || '').trim()
+  if (!txt) { toast('请先粘贴备份内容'); return }
+  try {
+    var r = importData(txt)
+    closeModal()
+    if (state.tab === 'history') renderHistory()
+    if (state.tab === 'library') renderLibrary()
+    toast('导入成功：合并 ' + r.days + ' 天记录' + (r.exAdded ? '，新增 ' + r.exAdded + ' 个动作' : ''))
+  } catch (err) { toast('导入失败：' + (err.message || '格式不正确')) }
+}
+
+/* ---------- 导出 ---------- */
+function doCopy(text, okMsg){
+  var fallback = function(){
+    var ta = document.createElement('textarea')
+    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0'
+    document.body.appendChild(ta); ta.select()
+    var ok = false
+    try { ok = document.execCommand('copy') } catch (e) {}
+    document.body.removeChild(ta)
+    toast(ok ? okMsg : '复制失败，请改用「下载备份」')
+  }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function(){ toast(okMsg) }, fallback)
+  } else fallback()
+}
+function doDownload(){
+  var blob = new Blob([exportJSON()], { type: 'application/json' })
+  var a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'fitness-backup-' + todayStr() + '.json'
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(function(){ URL.revokeObjectURL(a.href) }, 3000)
+  toast('已开始下载')
+}
+
+/* ================= 轻提示 / 页面切换 ================= */
+var toastTimer = null
+function toast(msg){
+  var el = $('#toast')
+  el.textContent = msg; el.classList.add('show')
+  clearTimeout(toastTimer)
+  toastTimer = setTimeout(function(){ el.classList.remove('show') }, 1800)
+}
+
+var tabBtns = document.querySelectorAll('.tab')
+tabBtns.forEach(function(b){ b.addEventListener('click', function(){ switchTab(b.dataset.tab) }) })
+function switchTab(name){
+  state.tab = name
+  closeDrawer(); closeModal()
+  tabBtns.forEach(function(b){ b.classList.toggle('on', b.dataset.tab === name) })
+  $('#page-train').classList.toggle('hidden', name !== 'train')
+  $('#page-history').classList.toggle('hidden', name !== 'history')
+  $('#page-library').classList.toggle('hidden', name !== 'library')
+  if (name === 'train') renderTrain()
+  if (name === 'history') renderHistory()
+  if (name === 'library') renderLibrary()
+}
+
+/* ================= 事件委托 ================= */
+document.addEventListener('click', function(e){
+  var t = e.target.closest('[data-act]')
+  if (!t) return
+  var a = t.dataset.act
+  var idx = t.dataset.idx != null ? +t.dataset.idx : -1
+  switch (a) {
+    case 'begin': beginTraining(); break
+    case 'card-act': {
+      var it = state.train.items[idx]
+      state.activeIdx = idx; state.iv = prefillFor(it); renderTrain(); break
+    }
+    case 'card-del': {
+      var it2 = state.train.items[idx]
+      if (it2.sets.length && !confirm('删除「' + it2.name + '」和它已记录的 ' + it2.sets.length + ' 组？')) return
+      state.train.items.splice(idx, 1)
+      state.activeIdx = -1; state.iv = { w: '', r: '' }
+      persist(); renderTrain(); break
+    }
+    case 'set-del': {
+      var it3 = state.train.items[idx]
+      it3.sets.splice(+t.dataset.si, 1)
+      persist(); renderTrain(); break
+    }
+    case 'add-set': addSet(); break
+    case 'complete': completeTraining(); break
+    case 'drawer-open': openDrawer(); break
+    case 'drawer-close': closeDrawer(); break
+    case 'drawer-add': drawerAdd(t.dataset.id); break
+    case 'cell': {
+      var d = t.dataset.date
+      state.histDetail = state.histDetail === d ? null : d
+      renderHistory(); break
+    }
+    case 'row-toggle': {
+      var d2 = t.dataset.date
+      state.expanded = state.expanded === d2 ? null : d2
+      renderHistory(); break
+    }
+    case 'day-del': {
+      var d3 = t.dataset.date
+      if (confirm('删除 ' + dateText(d3) + ' 的全部训练记录？')) {
+        removeWorkout(d3)
+        if (state.histDetail === d3) state.histDetail = null
+        renderHistory(); toast('已删除')
+      }
+      break
+    }
+    case 'exp-copy': doCopy(exportJSON(), '备份已复制到剪贴板'); break
+    case 'exp-dl': doDownload(); break
+    case 'imp-open': openImport(); break
+    case 'imp-do': doImport(); break
+    case 'lib-add': libAdd(); break
+    case 'lib-edit': openRename(t.dataset.id); break
+    case 'rename-save': renameSave(t.dataset.id); break
+    case 'rename-del': renameDel(t.dataset.id); break
+    case 'modal-close': closeModal(); break
+    case 'noop': break
+  }
+})
+document.addEventListener('input', function(e){
+  if (e.target.id === 'inp-w') state.iv.w = e.target.value
+  if (e.target.id === 'inp-r') state.iv.r = e.target.value
+})
+$('#drawer-mask').addEventListener('click', closeDrawer)
+$('#modal-mask').addEventListener('click', function(e){ if (e.target.id === 'modal-mask') closeModal() })
+
+/* ================= 启动 ================= */
+getExercises() // 首次启动写入默认动作
+var bootDraft = getDraft()
+if (bootDraft && bootDraft.date === todayStr()) state.train = bootDraft
+switchTab('train')
+</script>
+
+
+<div data-trae-edit-ui="true" class="trae-image-download-btn" title="Download image" style="position: fixed; display: none; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; background: var(--trae-bg-menu, #222427); border: 1px solid var(--trae-border-l2, rgba(255,255,255,0.12)); box-shadow: var(--trae-floating-shadow, 0px 2px 8px 0px rgba(0,0,0,0.2)); color: var(--trae-icon-default, #f5f9fe); cursor: pointer; z-index: 89990; transition: background 0.15s; pointer-events: auto;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 2v8m0 0L5 7m3 3l3-3M3 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg></div></body></html>
