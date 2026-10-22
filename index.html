@@ -340,6 +340,7 @@ function lsGet(k, def){
 }
 function lsSet(k, v){
   try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { toast('保存失败：本地存储不可用') }
+  if (k !== GIST_KEY && k !== DRAFT_KEY) gistSchedule() // 数据有变化时安排自动云备份（草稿不参与备份）
 }
 
 var PARTS = ['胸', '背', '腿', '肩', '臂', '核心', '有氧', '其他']
@@ -1063,11 +1064,22 @@ function renderHistory(){
     }
     h += '</div>'
   })
-  h += '<div class="card"><div class="c-title">备份与恢复</div><div class="bk-btns">' +
+  var gcfg = gistCfg()
+  var gstat = !gcfg.token
+    ? '未开启 · 点「云备份设置」填入 Token 后，每次训练结束自动上传到你的 GitHub 私密 Gist'
+    : (gcfg.enabled
+      ? '已开启' + (gcfg.lastSync ? ' · 上次成功：' + gcfg.lastSync : ' · 尚未成功过，网络通畅时点「立即同步」试试')
+      : '已配置 Token，自动上传未开启')
+  h += '<div class="card"><div class="c-title">备份与恢复</div>' +
+    '<p class="bk-hint" style="margin:0 0 10px">' + esc(gstat) + '</p>' +
+    '<div class="bk-btns">' +
+    '<button class="btn-ghost" data-act="gist-open">云备份设置</button>' +
+    '<button class="btn-ghost" data-act="gist-now">立即同步</button>' +
+    (gcfg.gistId ? '<button class="btn-ghost" data-act="gist-restore">从云端恢复</button>' : '') +
     '<button class="btn-ghost" data-act="exp-copy">复制备份</button>' +
     '<button class="btn-ghost" data-act="exp-dl">下载备份</button>' +
     '<button class="btn-ghost" data-act="imp-open">导入数据</button></div>' +
-    '<p class="bk-hint">数据只保存在本机浏览器里（含训练、热量、体重），换设备或清缓存前记得先备份，并定期导出。导入旧版备份同样兼容。</p></div>'
+    '<p class="bk-hint">数据保存在本机浏览器里（含训练、热量、体重），建议开启云备份以防换机/清缓存丢失。导入旧版备份同样兼容。</p></div>'
   el.innerHTML = h
 }
 function dayDetailHTML(date){
@@ -1631,6 +1643,98 @@ function doDownload(){
   toast('已开始下载')
 }
 
+/* ---------- GitHub 自动云备份 ----------
+   数据变化 → lsSet 钩子 → gistSchedule()（8 秒防抖，自动上传最少间隔 60 秒）
+   首次 POST 创建私密 Gist，之后 PATCH 更新同一份；恢复 = 拉取 Gist 内容走 importData 合并 */
+var GIST_KEY = 'fc_gist_cfg'
+var GIST_FILE = 'ywt-fitness-backup.json'
+var gistTimer = null, gistBusy = false, gistLastTry = 0
+function gistCfg(){ return lsGet(GIST_KEY, { token: '', gistId: '', enabled: false, lastSync: '' }) }
+function gistTime(){ var d = new Date(); return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) }
+function gistSchedule(){
+  var cfg = gistCfg()
+  if (!cfg.enabled || !cfg.token || gistBusy) return
+  clearTimeout(gistTimer)
+  var wait = Math.max(8000, 60000 - (Date.now() - gistLastTry))
+  gistTimer = setTimeout(function(){ gistSync(false) }, wait)
+}
+function gistSync(manual){
+  var cfg = gistCfg()
+  if (!cfg.token) { if (manual) toast('请先在「云备份设置」里填写 Token'); return }
+  if (gistBusy) { if (manual) toast('正在同步中…'); return }
+  gistBusy = true; gistLastTry = Date.now()
+  if (manual) toast('正在上传备份…')
+  var files = {}
+  files[GIST_FILE] = { content: exportJSON() }
+  var url = cfg.gistId ? ('https://api.github.com/gists/' + cfg.gistId) : 'https://api.github.com/gists'
+  var opt = {
+    method: cfg.gistId ? 'PATCH' : 'POST',
+    headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(cfg.gistId ? { files: files } : { description: 'YWT Fitness 自动备份', public: false, files: files })
+  }
+  fetch(url, opt).then(function(res){
+    if (!res.ok) return res.json().catch(function(){ return {} }).then(function(j){
+      throw new Error((j && j.message) ? j.message : ('HTTP ' + res.status))
+    })
+    return res.json()
+  }).then(function(j){
+    if (!cfg.gistId && j && j.id) cfg.gistId = j.id
+    cfg.lastSync = gistTime()
+    lsSet(GIST_KEY, cfg)
+    gistBusy = false
+    if (manual) toast('云备份成功')
+    if (state.tab === 'history') renderHistory()
+  }).catch(function(err){
+    gistBusy = false
+    if (manual) toast('云备份失败：' + (err && err.message ? err.message : '网络不可达，稍后自动重试'))
+  })
+}
+function gistRestore(){
+  var cfg = gistCfg()
+  if (!cfg.token || !cfg.gistId) { toast('还没有云端备份可恢复'); return }
+  if (!confirm('用云端备份与本地数据合并？\n（同一天同一动作以云端为准，本地多出的记录保留）')) return
+  toast('正在从云端读取…')
+  fetch('https://api.github.com/gists/' + cfg.gistId, { headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json' } })
+    .then(function(res){ if (!res.ok) throw new Error('HTTP ' + res.status); return res.json() })
+    .then(function(j){
+      var f = j.files && j.files[GIST_FILE]
+      if (!f || !f.content) throw new Error('云端没有备份内容')
+      var r = importData(f.content)
+      closeModal()
+      renderHistory()
+      toast('恢复成功：训练 ' + r.days + ' 天' + (r.exAdded ? '，动作 +' + r.exAdded : ''))
+    })
+    .catch(function(err){ toast('恢复失败：' + (err && err.message ? err.message : '网络不可达')) })
+}
+function gistSave(){
+  var tk = ($('#gist-token').value || '').trim()
+  if (!tk) { toast('请填写 Token'); return }
+  var cfg = gistCfg()
+  if (tk !== cfg.token) cfg.gistId = '' // 换了 Token 就重新创建 Gist
+  cfg.token = tk; cfg.enabled = true
+  lsSet(GIST_KEY, cfg)
+  closeModal(); renderHistory()
+  gistSync(true)
+}
+function gistToggle(){
+  var cfg = gistCfg()
+  if (!cfg.token) { openGistModal(); return }
+  cfg.enabled = !cfg.enabled
+  lsSet(GIST_KEY, cfg); renderHistory()
+  toast(cfg.enabled ? '自动云备份已开启' : '自动云备份已停用')
+}
+function openGistModal(){
+  var cfg = gistCfg()
+  openModal('<h3>GitHub 云备份设置</h3>' +
+    '<p class="m-hint">① 手机浏览器打开 github.com 登录 → 右上角头像 → Settings → 拉到底部 Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic) → 勾选 gist → 生成并复制 ghp_ 开头的一串字符</p>' +
+    '<input id="gist-token" value="' + esc(cfg.token) + '" placeholder="粘贴 ghp_ 开头的 Token">' +
+    '<p class="m-hint">Token 只存在你手机本地；备份上传到你账号下的私密 Gist，别人看不到。开启后每次训练结束约 1 分钟内自动上传，无需任何操作。国内网络偶尔失败会静默重试，不影响正常使用。</p>' +
+    '<div class="m-btns">' +
+    (cfg.token ? '<button class="btn-ghost" data-act="gist-toggle">' + (cfg.enabled ? '停用自动备份' : '开启自动备份') + '</button>' : '') +
+    '<button class="btn-ghost" data-act="modal-close">取消</button>' +
+    '<button class="btn" data-act="gist-save">保存' + (cfg.token ? '' : '并开启') + '</button></div>')
+}
+
 /* ================= 轻提示 / 页面切换 ================= */
 var toastTimer = null
 function toast(msg){
@@ -1711,6 +1815,11 @@ document.addEventListener('click', function(e){
     case 'exp-dl': doDownload(); break
     case 'imp-open': openImport(); break
     case 'imp-do': doImport(); break
+    case 'gist-open': openGistModal(); break
+    case 'gist-save': gistSave(); break
+    case 'gist-now': gistSync(true); break
+    case 'gist-restore': gistRestore(); break
+    case 'gist-toggle': gistToggle(); break
     case 'note-open': openNote(t.dataset.date); break
     case 'note-save': saveNote(t.dataset.date); break
     case 'quote-next': pickQuote(); renderHome(); break
