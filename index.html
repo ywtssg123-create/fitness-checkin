@@ -127,6 +127,27 @@ input[type=number]{-moz-appearance:textfield}
 #drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:90}
 #drawer{position:fixed;left:0;right:0;bottom:0;max-height:72vh;background:var(--card);border-top:1px solid var(--line);border-radius:18px 18px 0 0;z-index:95;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .22s ease}
 #drawer.open{transform:translateY(0)}
+/* 登录覆盖层（不进 tab，访客可直接关闭） */
+#login{position:fixed;inset:0;background:var(--bg);z-index:120;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px calc(24px + env(safe-area-inset-bottom))}
+#login.open{display:flex}
+.lg-close{position:absolute;top:calc(14px + env(safe-area-inset-top));right:18px;background:none;border:none;color:var(--t2);font-size:22px;padding:6px}
+.lg-logo{font-size:34px;font-weight:900;color:var(--brand);letter-spacing:1px}
+.lg-sub{font-size:11px;color:var(--t3);letter-spacing:3px;margin:6px 0 26px}
+.lg-warn{width:100%;max-width:360px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.4);color:#FFD166;font-size:12px;border-radius:10px;padding:9px 12px;margin-bottom:14px;line-height:1.5}
+.lg-box{width:100%;max-width:360px}
+.lg-row{display:flex;gap:8px;margin-bottom:10px}
+.lg-cc{width:110px;flex:none;background:var(--field);border:1px solid var(--line);border-radius:12px;color:var(--t1);font-size:13px;padding:13px 8px;appearance:none;-webkit-appearance:none;outline:none}
+.lg-inp{flex:1;width:100%;background:var(--field);border:1px solid var(--line);border-radius:12px;color:var(--t1);font-size:16px;padding:13px 14px;outline:none;-webkit-appearance:none}
+.lg-inp:focus{border-color:var(--brand)}
+.lg-code{display:flex;gap:8px;margin-bottom:10px}
+.lg-code .lg-inp{flex:1;letter-spacing:6px;text-align:center}
+.lg-send{flex:none;width:118px;background:var(--brand-soft);border:1px solid var(--brand);border-radius:12px;color:var(--brand);font-size:13px;font-weight:700}
+.lg-send:disabled{opacity:.45;border-color:var(--line);color:var(--t3);background:var(--field)}
+.lg-err{min-height:18px;font-size:12px;color:var(--red);text-align:center;margin-bottom:4px}
+.lg-btn{width:100%;background:var(--brand);color:#0B0D10;border:none;border-radius:12px;font-size:16px;font-weight:800;padding:14px;margin-bottom:6px}
+.lg-btn:disabled{opacity:.45}
+.lg-skip{width:100%;background:none;border:none;color:var(--t3);font-size:13px;text-decoration:underline;padding:10px}
+.lg-priv{font-size:11px;color:var(--t3);margin-top:14px;text-align:center;line-height:1.6;max-width:360px}
 .d-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 8px;font-weight:700;font-size:16px}
 .d-h .x{font-size:24px}
 .d-list{overflow-y:auto;padding:4px 18px calc(20px + env(safe-area-inset-bottom))}
@@ -313,6 +334,41 @@ input[type=number]{-moz-appearance:textfield}
 <div id="modal-mask" class="hidden"><div id="modal"><div id="modal-body"></div></div></div>
 <div id="toast"></div>
 
+<!-- 登录覆盖层：访客可随时关闭，登录与健身数据完全分离 -->
+<div id="login" role="dialog" aria-label="手机号登录">
+  <button class="lg-close" data-act="auth-close" aria-label="关闭">✕</button>
+  <div class="lg-logo">YWT</div>
+  <div class="lg-sub">BETTER YOU EVERY DAY</div>
+  <div class="lg-warn" id="lg-warn" style="display:none">短信服务尚未配置：需先完成 Supabase + Twilio 配置才能发送验证码。不影响 App 的任何现有功能。</div>
+  <div class="lg-box">
+    <div class="lg-row">
+      <select class="lg-cc" id="lg-cc" aria-label="国际区号">
+        <option value="+86">+86 中国大陆</option>
+        <option value="+852">+852 中国香港</option>
+        <option value="+853">+853 中国澳门</option>
+        <option value="+886">+886 中国台湾</option>
+        <option value="+65">+65 新加坡</option>
+        <option value="+60">+60 马来西亚</option>
+        <option value="+1">+1 美国/加拿大</option>
+        <option value="+44">+44 英国</option>
+        <option value="+81">+81 日本</option>
+        <option value="+82">+82 韩国</option>
+        <option value="+61">+61 澳大利亚</option>
+        <option value="+66">+66 泰国</option>
+      </select>
+      <input class="lg-inp" id="lg-phone" type="tel" inputmode="numeric" placeholder="手机号" maxlength="15" autocomplete="tel-national">
+    </div>
+    <div class="lg-code">
+      <input class="lg-inp" id="lg-otp" type="number" inputmode="numeric" placeholder="验证码" maxlength="6" autocomplete="one-time-code">
+      <button class="lg-send" id="lg-send" data-act="auth-send">获取验证码</button>
+    </div>
+    <div class="lg-err" id="lg-err"></div>
+    <button class="lg-btn" id="lg-go" data-act="auth-verify">登录</button>
+    <button class="lg-skip" data-act="auth-close">先逛逛，稍后登录</button>
+  </div>
+  <div class="lg-priv">登录账号仅用于身份识别；健身数据仍保存在本机，不会因登录上传。</div>
+</div>
+
 <script>
 'use strict'
 /* ================= 工具 ================= */
@@ -340,7 +396,7 @@ function lsGet(k, def){
 }
 function lsSet(k, v){
   try { localStorage.setItem(k, JSON.stringify(v)) } catch (e) { toast('保存失败：本地存储不可用') }
-  if (k !== GIST_KEY && k !== DRAFT_KEY) gistSchedule() // 数据有变化时安排自动云备份（草稿不参与备份）
+  if (k !== GIST_KEY && k !== DRAFT_KEY && k !== AUTH_KEY) gistSchedule() // 数据有变化时安排自动云备份（草稿与登录态不参与备份）
 }
 
 var PARTS = ['胸', '背', '腿', '肩', '臂', '核心', '有氧', '其他']
@@ -1080,6 +1136,12 @@ function renderHistory(){
     '<button class="btn-ghost" data-act="exp-dl">下载备份</button>' +
     '<button class="btn-ghost" data-act="imp-open">导入数据</button></div>' +
     '<p class="bk-hint">数据保存在本机浏览器里（含训练、热量、体重），建议开启云备份以防换机/清缓存丢失。导入旧版备份同样兼容。</p></div>'
+  var au = authState()
+  h += '<div class="card"><div class="c-title">账号</div>' +
+    (au.phone
+      ? '<button class="btn-ghost btn-block" data-act="auth-logout">退出登录（' + esc(maskPhone(au.phone)) + '）</button>'
+      : '<button class="btn-ghost btn-block" data-act="auth-open">手机号登录</button>') +
+    '<p class="bk-hint" style="margin:8px 0 0">登录仅用于身份识别，健身数据仍只保存在本机，退出登录不会删除任何记录。</p></div>'
   el.innerHTML = h
 }
 function dayDetailHTML(date){
@@ -1874,6 +1936,11 @@ document.addEventListener('click', function(e){
       cd2.setDate(cd2.getDate() + 1)
       state.calDate = fmtDate(cd2); renderCalorie(); break
     }
+    case 'auth-open': authOpen(); break
+    case 'auth-close': authClose(); break
+    case 'auth-send': authSend(); break
+    case 'auth-verify': authVerify(); break
+    case 'auth-logout': authLogout(); break
   }
 })
 document.addEventListener('input', function(e){
@@ -1888,6 +1955,141 @@ document.addEventListener('change', function(e){
 })
 $('#drawer-mask').addEventListener('click', closeDrawer)
 $('#modal-mask').addEventListener('click', function(e){ if (e.target.id === 'modal-mask') closeModal() })
+
+/* ================= 登录适配层（Supabase Phone Auth REST，零外部依赖） =================
+   AUTH_URL / AUTH_ANON 留空 = 短信未配置：按钮禁用并提示，绝不接受任意验证码。
+   只使用 anon public key（设计上公开）；Service Role Key 等服务端秘密严禁写进本文件。
+   登录态存 fc_auth_cfg，与健身数据完全分离；退出只清此键，不触碰任何 fc_* 健身数据。 */
+var AUTH_URL = '', AUTH_ANON = ''   // 待配置：Supabase Project URL + anon public key
+var AUTH_KEY = 'fc_auth_cfg'
+var lgTimer = null
+function authState(){ return lsGet(AUTH_KEY, { phone: '', access: '', refresh: '', exp: 0, lastSend: 0 }) }
+function authConfigured(){ return !!(AUTH_URL && AUTH_ANON) }
+function maskPhone(p){ return (p && p.length > 7) ? p.slice(0, 3) + '****' + p.slice(-4) : (p || '') }
+function supa(path, opts){
+  var o = opts || {}
+  var headers = Object.assign({ 'apikey': AUTH_ANON, 'Content-Type': 'application/json' }, o.headers || {})
+  return fetch(AUTH_URL + path, { method: o.method || 'POST', headers: headers, body: o.body }).then(function(r){
+    return r.json().catch(function(){ return null }).then(function(body){
+      if (!r.ok) throw new Error((body && (body.error_description || body.msg || body.error)) || ('请求失败(' + r.status + ')'))
+      return body
+    })
+  })
+}
+function authErrText(e){
+  var m = String((e && e.message) || e)
+  if (/429|rate|too many|frequen/i.test(m)) return '操作过于频繁，请稍后再试'
+  if (/invalid|expired|token/i.test(m)) return '验证码错误或已过期'
+  if (/phone/i.test(m) && /invalid|format/i.test(m)) return '手机号格式不正确'
+  if (/Failed to fetch|NetworkError|network/i.test(m)) return '网络连接失败，请检查网络'
+  return m
+}
+function authOpen(){
+  var l = document.getElementById('login')
+  if (!l) return
+  l.classList.add('open')
+  renderAuthUI()
+}
+function authClose(){
+  var l = document.getElementById('login')
+  if (l) l.classList.remove('open')
+  clearInterval(lgTimer)
+}
+function renderAuthUI(){
+  var cfgd = authConfigured()
+  var w = document.getElementById('lg-warn')
+  var send = document.getElementById('lg-send')
+  var go = document.getElementById('lg-go')
+  if (w) w.style.display = cfgd ? 'none' : 'block'
+  if (send && !cfgd) { send.disabled = true; send.textContent = '短信未配置' }
+  if (go) go.disabled = !cfgd
+  authTick()
+}
+function authTick(){
+  var send = document.getElementById('lg-send')
+  if (!send) return
+  var left = Math.ceil((authState().lastSend + 60000 - Date.now()) / 1000)
+  if (left > 0) { send.disabled = true; send.textContent = left + 's 后重发' }
+  else if (authConfigured()) { send.disabled = false; send.textContent = '获取验证码' }
+}
+async function authSend(){
+  if (!authConfigured()) { toast('短信服务尚未配置，无法发送验证码'); return }
+  var cc = document.getElementById('lg-cc')
+  var inp = document.getElementById('lg-phone')
+  var err = document.getElementById('lg-err')
+  var send = document.getElementById('lg-send')
+  var phone = cc.value + (inp.value || '').replace(/\D/g, '')
+  err.textContent = ''
+  if ((inp.value || '').replace(/\D/g, '').length < 7) { err.textContent = '请输入正确的手机号'; return }
+  send.disabled = true; send.textContent = '发送中…'
+  try {
+    await supa('/auth/v1/otp', { body: JSON.stringify({ phone: phone }) })
+    var st = authState()
+    st.phone = phone; st.lastSend = Date.now()
+    lsSet(AUTH_KEY, st)
+    toast('验证码已发送，请查收短信')
+    var n = 60
+    lgTimer = setInterval(function(){
+      n--
+      if (n <= 0) { clearInterval(lgTimer); authTick() }
+      else send.textContent = n + 's 后重发'
+    }, 1000)
+  } catch (e) {
+    err.textContent = authErrText(e)
+    authTick()
+  }
+}
+async function authVerify(){
+  if (!authConfigured()) { toast('短信服务尚未配置，无法登录'); return }
+  var otp = (document.getElementById('lg-otp').value || '').replace(/\D/g, '')
+  var err = document.getElementById('lg-err')
+  var go = document.getElementById('lg-go')
+  var st = authState()
+  err.textContent = ''
+  if (otp.length < 4) { err.textContent = '请输入短信中的验证码'; return }
+  if (!st.phone) { err.textContent = '请先获取验证码'; return }
+  go.disabled = true; go.textContent = '验证中…'
+  try {
+    var res = await supa('/auth/v1/verify', { body: JSON.stringify({ type: 'sms', phone: st.phone, token: otp }) })
+    st.access = res.access_token || ''
+    st.refresh = res.refresh_token || ''
+    st.exp = (res.expires_at || 0) * 1000
+    st.phone = (res.user && res.user.phone) || st.phone
+    lsSet(AUTH_KEY, st)
+    toast('登录成功，欢迎回来')
+    authClose()
+    renderMe()
+  } catch (e) {
+    err.textContent = authErrText(e)
+  } finally {
+    go.disabled = !authConfigured(); go.textContent = '登录'
+  }
+}
+async function authLogout(){
+  var st = authState()
+  if (st.access && authConfigured()) {
+    try {
+      await supa('/auth/v1/logout?scope=global', { headers: { 'Authorization': 'Bearer ' + st.access }, body: '{}' })
+    } catch (e) {}
+  }
+  lsSet(AUTH_KEY, { phone: '', access: '', refresh: '', exp: 0, lastSend: 0 })
+  toast('已退出登录，健身数据不受影响')
+  renderMe()
+}
+function authSession(){
+  /* 过期时静默刷新；刷新失败仅视为未登录，绝不清除健身数据 */
+  var st = authState()
+  if (!st.phone || !st.access) return null
+  if (st.exp > Date.now()) return st
+  if (!st.refresh) return null
+  supa('/auth/v1/token?grant_type=refresh_token', { body: JSON.stringify({ refresh_token: st.refresh }) }).then(function(res){
+    st.access = res.access_token
+    st.refresh = res.refresh_token
+    st.exp = (res.expires_at || 0) * 1000
+    lsSet(AUTH_KEY, st)
+  }).catch(function(){})
+  return st
+}
 
 /* ================= 启动 ================= */
 getExercises() // 首次启动写入默认动作

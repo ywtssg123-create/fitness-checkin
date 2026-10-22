@@ -1,7 +1,7 @@
 // YWT Fitness 离线缓存 v6
 // 页面导航 network-first：有网始终用最新版（4 秒超时回落缓存，弱网不白屏），
 // 静态资源缓存优先+后台静默更新；安装失败自动保留旧缓存，不清空用户数据。
-var CACHE = 'ywt-v6'
+var CACHE = 'ywt-v7'
 var CORE = ['./', './index.html', './apple-touch-icon.png?v=2']
 var EXTRA = ['./manifest.json', './icon-192.png', './icon-512.png']
 
